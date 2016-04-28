@@ -126,7 +126,7 @@ public class TScenario {
      * @since 1.0
      */    
     public String marshallTitle() {
-        String cadena = "#Titulo#";
+        String cadena = "#Title#";
         if (this.obtenerTitulo().replace('#', ' ').equals("")) {
             cadena += java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("TEscenario.SinDefinir");
         } else {
@@ -143,7 +143,7 @@ public class TScenario {
      * @return La representaci�n serializada del autor
      */    
     public String marshallAuthor() {
-        String cadena = "#Autor#";
+        String cadena = "#Author#";
         if (this.obtenerAutor().replace('#', ' ').equals("")) {
             cadena += java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("TEscenario.SinDefinir");
         } else {
@@ -160,7 +160,7 @@ public class TScenario {
      * @return Representaci�n serializada de la descripci�n.
      */    
     public String marshallDescription() {
-        String cadena = "#Descripcion#";
+        String cadena = "#Description#";
         if (this.obtenerDescripcion().replace('#', ' ').equals("")) {
             cadena += java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("TEscenario.SinDefinir");
         } else {

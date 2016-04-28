@@ -22,6 +22,7 @@ import simMPLS.utils.TIDGenerator;
 import simMPLS.utils.TLongIDGenerator;
 import java.awt.*;
 import java.util.*;
+import simMPLS.hardware.tldp.TSwitchingMatrixEntry;
 
 /**
  * Esta clase implementa una topolog�a de rede completa.
@@ -43,9 +44,11 @@ public class TTopology {
         escenarioPadre = e;
         IDEvento = new TLongIDGenerator();
         generaIdentificador = new TIDGenerator();
+        gIdentLDP = new TIDGenerator();
         generadorIP = new TIPGenerator();
         cerrojoFloyd = new TMonitor();
         cerrojoRABAN = new TMonitor();
+        labelToAllocate = TSwitchingMatrixEntry.FIRST_UNRESERVED_LABEL;
     }
 
     /**
@@ -71,6 +74,27 @@ public class TTopology {
         IDEvento.reset();
         this.cerrojoFloyd.unLock();
         this.cerrojoRABAN.unLock();
+        labelToAllocate = TSwitchingMatrixEntry.FIRST_UNRESERVED_LABEL;
+    }
+    
+    /**
+     * This method generates and returns a new 20-bits label tha is not used by
+     * any other switching entry in the topology.
+     *
+     * @author Gaetan Bulpa
+     * @return a new 20-bits label that is not used by any other switching entry
+     * in the topology, if possible. If the label space is completely
+     * used and is not possible to return a new label, this returns
+     * TSwitchingMatrixEntry.LABEL_UNAVAILABLE.
+     * @since 2.0
+     */
+    public int getNewLabel() {
+        if (this.labelToAllocate <= TSwitchingMatrixEntry.LABEL_SPACE) {
+            this.labelToAllocate++;
+            return this.labelToAllocate;
+        } else {
+            return TSwitchingMatrixEntry.LABEL_UNAVAILABLE;
+        }
     }
     
     /**
@@ -82,7 +106,7 @@ public class TTopology {
         conjuntoNodos.add(nodo);
         relojTopologia.addTimerEventListener(nodo);
         try {
-            nodo.addListenerSimulacion(escenarioPadre.getSimulation().obtenerRecolector());
+            nodo.addListenerSimulacion(getEscenarioPadre().getSimulation().obtenerRecolector());
         } catch (ESimulationSingleSubscriber e) {System.out.println(e.toString());}
     }
     
@@ -332,7 +356,7 @@ public class TTopology {
         conjuntoEnlaces.add(enlace);
         relojTopologia.addTimerEventListener(enlace);
         try {
-            enlace.addListenerSimulacion(escenarioPadre.getSimulation().obtenerRecolector());
+            enlace.addListenerSimulacion(getEscenarioPadre().getSimulation().obtenerRecolector());
         } catch (ESimulationSingleSubscriber e) {System.out.println(e.toString());}
     }
 
@@ -697,6 +721,20 @@ public class TTopology {
     public TIPGenerator getIPAddressGenerator() {
         return generadorIP;
     }
+    
+    /**
+     * @return the gIdentLDP
+     */
+    public TIDGenerator getgIdentLDP() {
+        return gIdentLDP;
+    }
+
+    /**
+     * @param gIdentLDP the gIdentLDP to set
+     */
+    public void setgIdentLDP(TIDGenerator gIdentLDP) {
+        this.gIdentLDP = gIdentLDP;
+    }
 
     /**
      * Dados dos nodos como par�metros, uno de origen y otro de destino, este m�todo
@@ -839,7 +877,7 @@ public class TTopology {
      * @param IPorigen Direcci�n IP del nodo desde el que se calcula el salto.
      * @param IPdestino Direcci�n IP del nodo al que se quiere llegar.
      */    
-    public synchronized String getNextHopRABANIPv4Address(String IPorigen, String IPdestino, String IPNodoAEvitar) {
+    public synchronized String obtenerIPSaltoRABAN(String IPorigen, String IPdestino, String IPNodoAEvitar) {
         int origen = this.obtenerNodo(IPorigen).getID();
         int destino = this.obtenerNodo(IPdestino).getID();
         int nodoAEvitar = this.obtenerNodo(IPNodoAEvitar).getID();
@@ -1049,6 +1087,13 @@ public class TTopology {
         cerrojoRABAN.unLock();
         return nodoSiguiente;
       }
+    
+    /**
+     * @return the escenarioPadre
+     */
+    public TScenario getEscenarioPadre() {
+        return escenarioPadre;
+    }
 
     /**
      * Esta constante identifica un peso infinito.
@@ -1072,7 +1117,11 @@ public class TTopology {
     private TScenario escenarioPadre;
     private TLongIDGenerator IDEvento;
     private TIDGenerator generaIdentificador;
+    private TIDGenerator gIdentLDP;
     private TIPGenerator generadorIP;
     private TMonitor cerrojoFloyd;
     private TMonitor cerrojoRABAN;
+    private int labelToAllocate;
+
+    
 }

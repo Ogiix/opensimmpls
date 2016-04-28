@@ -41,10 +41,10 @@ public class TMPLSLabelStack {
     }
 
     /**
-     * This method gets the size of the label stack in bytes (octects).
+     * This method gets the number of elements in the label stack.
      *
      * @author Manuel Domínguez Dorado - ingeniero@ManoloDominguez.com
-     * @return The size of the lable stack in bytes (octects).
+     * @return The number of element in the stack.
      * @since 1.0
      */
     public int getSize() {
@@ -78,6 +78,18 @@ public class TMPLSLabelStack {
      */
     public TMPLSLabel getTop() {
         return (TMPLSLabel) this.stack.getLast();
+    }
+    
+    /**
+     * This method gets the MPLS label at the id position of the MPLS label stack, but
+     * does not remove it.
+     *
+     * @author Gaetan Bulpa
+     * @return MPLS label of MPLS label stack.
+     * @since 2.0
+     */
+    public TMPLSLabel getLabelFromID(int id) {
+        return (TMPLSLabel) this.stack.get(id);
     }
 
     /**

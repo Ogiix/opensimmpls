@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.zip.CRC32;
 import simMPLS.scenario.TInternalLink;
 import simMPLS.scenario.TExternalLink;
@@ -30,6 +31,7 @@ import simMPLS.scenario.TReceiverNode;
 import simMPLS.scenario.TActiveLSRNode;
 import simMPLS.scenario.TLSRNode;
 import simMPLS.scenario.TActiveLERNode;
+import simMPLS.scenario.TNode;
 
 /**
  * This class implements a class that loads a scenario from disk in OSM (Open
@@ -53,6 +55,7 @@ public class TOSMLoader {
         this.input = null;
         this.scenarioCRC = new CRC32();
         this.position = TOSMLoader.NONE;
+        this.nodeToTable= null;
     }
 
     /**
@@ -76,10 +79,24 @@ public class TOSMLoader {
                     while ((stringAux = this.input.readLine()) != null) {
                         if ((!stringAux.equals("")) && (!stringAux.startsWith("//")) && (!stringAux.startsWith("@CRC#"))) {
                             if (this.position == TOSMLoader.NONE) {
-                                if (stringAux.startsWith("@?Escenario")) {
+                                if (stringAux.startsWith("@?Scenario")) {
                                     this.position = TOSMLoader.SCENARIO;
-                                } else if (stringAux.startsWith("@?Topologia")) {
+                                } else if (stringAux.startsWith("@?Topology")) {
                                     this.position = TOSMLoader.TOPOLOGY;
+                                } else if (stringAux.startsWith("@?Tables@")) {
+                                    this.position = TOSMLoader.TABLES;
+                                    String nodeName = stringAux.substring(9);
+                                    Iterator auxIterator = this.scenario.getTopology().getNodesIterator();
+                                    while(auxIterator.hasNext())
+                                    {
+                                        TNode auxNode = (TNode) auxIterator.next();
+                                        if (auxNode != null) {
+                                            if (auxNode.getName().compareTo(nodeName)==0) {
+                                                this.nodeToTable = auxNode;
+                                                this.nodeToTable.setLDP(false);
+                                            }
+                                        }
+                                    }
                                 } else if (stringAux.startsWith("@?Simulacion")) {
                                     this.position = TOSMLoader.SIMULATION;
                                 } else if (stringAux.startsWith("@?Analisis")) {
@@ -89,6 +106,8 @@ public class TOSMLoader {
                                 loadScenario(stringAux);
                             } else if (position == TOSMLoader.TOPOLOGY) {
                                 loadTopology(stringAux);
+                            } else if (position == TOSMLoader.TABLES) {
+                                loadTables(stringAux);
                             } else if (position == TOSMLoader.SIMULATION) {
                                 if (stringAux.startsWith("@!Simulacion")) {
                                     this.position = TOSMLoader.NONE;
@@ -112,9 +131,9 @@ public class TOSMLoader {
     }
 
     private void loadTopology(String topologyString) {
-        if (topologyString.startsWith("@!Topologia")) {
+        if (topologyString.startsWith("@!Topology")) {
             this.position = TOSMLoader.NONE;
-        } else if (topologyString.startsWith("#Receptor#")) {
+        } else if (topologyString.startsWith("#Receiver#")) {
             TReceiverNode receiver = new TReceiverNode(0, "10.0.0.1", this.scenario.getTopology().getEventIDGenerator(), this.scenario.getTopology());
             if (receiver.unMarshall(topologyString)) {
                 this.scenario.getTopology().addNode(receiver);
@@ -122,7 +141,7 @@ public class TOSMLoader {
                 this.scenario.getTopology().getIPAddressGenerator().setValueIfGreater(receiver.getIPAddress());
             }
             receiver = null;
-        } else if (topologyString.startsWith("#Emisor#")) {
+        } else if (topologyString.startsWith("#Sender#")) {
             TSenderNode sender = new TSenderNode(0, "10.0.0.1", this.scenario.getTopology().getEventIDGenerator(), this.scenario.getTopology());
             if (sender.unMarshall(topologyString)) {
                 this.scenario.getTopology().addNode(sender);
@@ -162,14 +181,14 @@ public class TOSMLoader {
                 this.scenario.getTopology().getIPAddressGenerator().setValueIfGreater(activeLSR.getIPAddress());
             }
             activeLSR = null;
-        } else if (topologyString.startsWith("#EnlaceExterno#")) {
+        } else if (topologyString.startsWith("#ExternalLink#")) {
             TExternalLink externalLink = new TExternalLink(0, this.scenario.getTopology().getEventIDGenerator(), this.scenario.getTopology());
             if (externalLink.unMarshall(topologyString)) {
                 this.scenario.getTopology().addLink(externalLink);
                 this.scenario.getTopology().getItemIdentifierGenerator().setIDIfGreater(externalLink.getID());
             }
             externalLink = null;
-        } else if (topologyString.startsWith("#EnlaceInterno#")) {
+        } else if (topologyString.startsWith("#InternalLink#")) {
             TInternalLink internalLink = new TInternalLink(0, this.scenario.getTopology().getEventIDGenerator(), this.scenario.getTopology());
             if (internalLink.unMarshall(topologyString)) {
                 this.scenario.getTopology().addLink(internalLink);
@@ -179,22 +198,32 @@ public class TOSMLoader {
         }
     }
 
-    private void loadScenario(String scenarioString) {
-        if (scenarioString.startsWith("@!Escenario")) {
+    private void loadTables(String tableString) {
+        if (tableString.startsWith("@!Tables")) {
             this.position = TOSMLoader.NONE;
-        } else if (scenarioString.startsWith("#Titulo#")) {
+            this.nodeToTable = null;
+        } else {
+            nodeToTable.addTableEntry(tableString);
+        }
+    }
+    
+    
+    private void loadScenario(String scenarioString) {
+        if (scenarioString.startsWith("@!Scenario")) {
+            this.position = TOSMLoader.NONE;
+        } else if (scenarioString.startsWith("#Title#")) {
             if (!this.scenario.unmarshallTitle(scenarioString)) {
                 this.scenario.setTitle("");
             }
-        } else if (scenarioString.startsWith("#Autor#")) {
+        } else if (scenarioString.startsWith("#Author#")) {
             if (!this.scenario.unmarshallAuthor(scenarioString)) {
                 this.scenario.setAuthor("");
             }
-        } else if (scenarioString.startsWith("#Descripcion#")) {
+        } else if (scenarioString.startsWith("#Description#")) {
             if (!this.scenario.unmarshallDescription(scenarioString)) {
                 this.scenario.setDescription("");
             }
-        } else if (scenarioString.startsWith("#Temporizacion#")) {
+        } else if (scenarioString.startsWith("#Timing#")) {
             if (!this.scenario.getSimulation().unmarshallTimeParameters(scenarioString)) {
                 this.scenario.getSimulation().setDuration(500);
                 this.scenario.getSimulation().setStep(1);
@@ -257,8 +286,10 @@ public class TOSMLoader {
     private static final int TOPOLOGY = 2;
     private static final int SIMULATION = 3;
     private static final int ANALISYS = 4;
+    private static final int TABLES = 5;
 
     private int position;
+    private TNode nodeToTable;
     private CRC32 scenarioCRC;
     private TScenario scenario;
     private FileInputStream inputStream;

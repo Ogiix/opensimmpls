@@ -81,7 +81,7 @@ public class TExternalLink extends TLink implements ITimerEventListener, Runnabl
                 this.cerrojo.lock();
                 TAbstractPDU paquete = null;
                 TLinkBufferEntry ebe = null;
-                Iterator it = this.buffer.iterator();
+                Iterator it = this.getBuffer().iterator();
                 while (it.hasNext()) {
                     ebe = (TLinkBufferEntry) it.next();
                     paquete = ebe.obtenerPaquete();
@@ -127,7 +127,7 @@ public class TExternalLink extends TLink implements ITimerEventListener, Runnabl
      */    
     public void actualizarTiemposDeEspera() {
         cerrojo.lock();
-        Iterator it = buffer.iterator();
+        Iterator it = getBuffer().iterator();
         while (it.hasNext()) {
             TLinkBufferEntry ebe = (TLinkBufferEntry) it.next();
             ebe.restarTiempoPaso(paso);
@@ -150,7 +150,7 @@ public class TExternalLink extends TLink implements ITimerEventListener, Runnabl
      */    
     public void adelantarPaquetesEnTransito() {
         cerrojo.lock();
-        Iterator it = buffer.iterator();
+        Iterator it = getBuffer().iterator();
         while (it.hasNext()) {
             TLinkBufferEntry ebe = (TLinkBufferEntry) it.next();
             if (ebe.obtenerTiempoEspera() <= 0) {
@@ -159,7 +159,7 @@ public class TExternalLink extends TLink implements ITimerEventListener, Runnabl
                 this.cerrojoLlegados.unLock();
             }
         }
-        it = buffer.iterator();
+        it = getBuffer().iterator();
         while (it.hasNext()) {
             TLinkBufferEntry ebe = (TLinkBufferEntry) it.next();
             if (ebe.obtenerTiempoEspera() <= 0)
@@ -240,7 +240,7 @@ public class TExternalLink extends TLink implements ITimerEventListener, Runnabl
      * @since 1.0
      */    
     public String marshall() {
-        String cadena = "#EnlaceExterno#";
+        String cadena = "#ExternalLink#";
         cadena += this.getID();
         cadena += "#";
         cadena += this.obtenerNombre().replace('#', ' ');
@@ -249,11 +249,11 @@ public class TExternalLink extends TLink implements ITimerEventListener, Runnabl
         cadena += "#";
         cadena += this.obtenerDelay();
         cadena += "#";
-        cadena += this.getEnd1().getIPAddress();
+        cadena += this.getEnd1().getName();
         cadena += "#";
         cadena += this.obtenerPuertoExtremo1();
         cadena += "#";
-        cadena += this.getEnd2().getIPAddress();
+        cadena += this.getEnd2().getName();
         cadena += "#";
         cadena += this.obtenerPuertoExtremo2();
         cadena += "#";
@@ -267,25 +267,24 @@ public class TExternalLink extends TLink implements ITimerEventListener, Runnabl
      * @return TRUE, si se deserializa correctamente, FALSE en caso contrario.
      * @since 1.0
      */    
+    @Override
     public boolean unMarshall(String elemento) {
         TLinkConfig configEnlace = new TLinkConfig();
         String valores[] = elemento.split("#");
         if (valores.length != 10) {
             return false;
         }
-        this.ponerIdentificador(Integer.valueOf(valores[2]).intValue());
+        this.ponerIdentificador(Integer.parseInt(valores[2]));
         configEnlace.ponerNombre(valores[3]);
-        configEnlace.ponerMostrarNombre(Boolean.valueOf(valores[4]).booleanValue());
-        configEnlace.ponerDelay(Integer.valueOf(valores[5]).intValue());
-        String IP1 = valores[6];
-        String IP2 = valores[8];
-        TNode ex1 = this.obtenerTopologia().obtenerNodo(IP1);
-        TNode ex2 = this.obtenerTopologia().obtenerNodo(IP2);
+        configEnlace.ponerMostrarNombre(Boolean.parseBoolean(valores[4]));
+        configEnlace.ponerDelay(Integer.parseInt(valores[5]));
+        TNode ex1 = this.obtenerTopologia().setFirstNodeNamed(valores[6]);
+        TNode ex2 = this.obtenerTopologia().setFirstNodeNamed(valores[8]);
         if (!((ex1 == null) || (ex2 == null))) {
             configEnlace.ponerNombreExtremo1(ex1.getName());
             configEnlace.ponerNombreExtremo2(ex2.getName());
-            configEnlace.ponerPuertoExtremo1(Integer.valueOf(valores[7]).intValue());
-            configEnlace.ponerPuertoExtremo2(Integer.valueOf(valores[9]).intValue());
+            configEnlace.ponerPuertoExtremo1(Integer.parseInt(valores[7]));
+            configEnlace.ponerPuertoExtremo2(Integer.parseInt(valores[9]));
             configEnlace.calcularTipo(this.topologia);
         } else {
             return false;
@@ -301,7 +300,7 @@ public class TExternalLink extends TLink implements ITimerEventListener, Runnabl
      */    
     public void reset() {
         this.cerrojo.lock();
-        Iterator it = this.buffer.iterator();
+        Iterator it = this.getBuffer().iterator();
         while (it.hasNext()) {
             it.next();
             it.remove();

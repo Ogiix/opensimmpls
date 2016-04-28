@@ -84,7 +84,7 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
                 this.cerrojo.lock();
                 TAbstractPDU paquete = null;
                 TLinkBufferEntry ebe = null;
-                Iterator it = this.buffer.iterator();
+                Iterator it = this.getBuffer().iterator();
                 while (it.hasNext()) {
                     ebe = (TLinkBufferEntry) it.next();
                     paquete = ebe.obtenerPaquete();
@@ -151,7 +151,7 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
      * Este m�todo quita un LSP establecido sobre este enlace.
      * @since 1.0
      */    
-    public void removeLSP() {
+    public void quitarLSP() {
         if (numeroDeLSPs > 0) {
             numeroDeLSPs--;
             try {
@@ -178,7 +178,7 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
      * Este m�todo a�ade un LSP de respaldo sobre este enlace.
      * @since 1.0
      */    
-    public void setBackupLSP() {
+    public void ponerLSPDeBackup() {
         numeroDeLSPsDeBackup++;
     }
 
@@ -198,7 +198,7 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
      */    
     public void actualizarTiemposDeEspera() {
         cerrojo.lock();
-        Iterator it = buffer.iterator();
+        Iterator it = getBuffer().iterator();
         while (it.hasNext()) {
             TLinkBufferEntry ebe = (TLinkBufferEntry) it.next();
             ebe.restarTiempoPaso(paso);
@@ -212,6 +212,8 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
                     this.generateSimulationEvent(new TSEPacketOnFly(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), ebe.obtenerPaquete().getSubtype(), pctj));
                 } else if (ebe.obtenerPaquete().getType() == TAbstractPDU.GPSRP) {
                     this.generateSimulationEvent(new TSEPacketOnFly(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), TAbstractPDU.GPSRP, pctj));
+                } else {
+                    this.generateSimulationEvent(new TSEPacketOnFly(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), ebe.obtenerPaquete().getSubtype(), pctj));
                 }
             } catch (EIDGeneratorOverflow e) {
                 e.printStackTrace(); 
@@ -227,7 +229,7 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
      */    
     public void adelantarPaquetesEnTransito() {
         cerrojo.lock();
-        Iterator it = buffer.iterator();
+        Iterator it = getBuffer().iterator();
         while (it.hasNext()) {
             TLinkBufferEntry ebe = (TLinkBufferEntry) it.next();
             if (ebe.obtenerTiempoEspera() <= 0) {
@@ -236,7 +238,7 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
                 this.cerrojoLlegados.unLock();
             }
         }
-        it = buffer.iterator();
+        it = getBuffer().iterator();
         while (it.hasNext()) {
             TLinkBufferEntry ebe = (TLinkBufferEntry) it.next();
             if (ebe.obtenerTiempoEspera() <= 0)
@@ -316,8 +318,9 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
      * @return El equivalente en texto del enlace interno completo.
      * @since 1.0
      */    
+    @Override
     public String marshall() {
-        String cadena = "#EnlaceInterno#";
+        String cadena = "#InternalLink#";
         cadena += this.getID();
         cadena += "#";
         cadena += this.obtenerNombre().replace('#', ' ');
@@ -326,11 +329,11 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
         cadena += "#";
         cadena += this.obtenerDelay();
         cadena += "#";
-        cadena += this.getEnd1().getIPAddress();
+        cadena += this.getEnd1().getName();
         cadena += "#";
         cadena += this.obtenerPuertoExtremo1();
         cadena += "#";
-        cadena += this.getEnd2().getIPAddress();
+        cadena += this.getEnd2().getName();
         cadena += "#";
         cadena += this.obtenerPuertoExtremo2();
         cadena += "#";
@@ -344,25 +347,24 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
      * @return TRUE, si se deserializa correctamente, FALSE en caso contrario.
      * @since 1.0
      */    
+    @Override
     public boolean unMarshall(String elemento) {
         TLinkConfig configEnlace = new TLinkConfig();
         String valores[] = elemento.split("#");
         if (valores.length != 10) {
             return false;
         }
-        this.ponerIdentificador(Integer.valueOf(valores[2]).intValue());
+        this.ponerIdentificador(Integer.parseInt(valores[2]));
         configEnlace.ponerNombre(valores[3]);
-        configEnlace.ponerMostrarNombre(Boolean.valueOf(valores[4]).booleanValue());
-        configEnlace.ponerDelay(Integer.valueOf(valores[5]).intValue());
-        String IP1 = valores[6];
-        String IP2 = valores[8];
-        TNode ex1 = this.obtenerTopologia().obtenerNodo(IP1);
-        TNode ex2 = this.obtenerTopologia().obtenerNodo(IP2);
+        configEnlace.ponerMostrarNombre(Boolean.parseBoolean(valores[4]));
+        configEnlace.ponerDelay(Integer.parseInt(valores[5]));
+        TNode ex1 = this.obtenerTopologia().setFirstNodeNamed(valores[6]);
+        TNode ex2 = this.obtenerTopologia().setFirstNodeNamed(valores[8]);
         if (!((ex1 == null) || (ex2 == null))) {
             configEnlace.ponerNombreExtremo1(ex1.getName());
             configEnlace.ponerNombreExtremo2(ex2.getName());
-            configEnlace.ponerPuertoExtremo1(Integer.valueOf(valores[7]).intValue());
-            configEnlace.ponerPuertoExtremo2(Integer.valueOf(valores[9]).intValue());
+            configEnlace.ponerPuertoExtremo1(Integer.parseInt(valores[7]));
+            configEnlace.ponerPuertoExtremo2(Integer.parseInt(valores[9]));
             configEnlace.calcularTipo(this.topologia);
         } else {
             return false;
@@ -378,7 +380,7 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
      */    
     public void reset() {
         this.cerrojo.lock();
-        Iterator it = this.buffer.iterator();
+        Iterator it = this.getBuffer().iterator();
         while (it.hasNext()) {
             it.next();
             it.remove();
@@ -403,7 +405,7 @@ public class TInternalLink extends TLink implements ITimerEventListener, Runnabl
         long pesoE2 = (long) ((double) (pesoD*0.10)) * this.getEnd2().getRoutingWeight();
         long pesoLSP = (long) ((double) (pesoD*0.05)) * this.numeroDeLSPs;
         long pesoLSPB = (long) ((double) (pesoD*0.05)) * this.numeroDeLSPsDeBackup;
-        long pesoOnFly = (long) ((double) (pesoD*0.10)) * this.buffer.size();
+        long pesoOnFly = (long) ((double) (pesoD*0.10)) * this.getBuffer().size();
         long subPeso = (long) (pesoE1 + pesoE2 + pesoLSP + pesoLSPB + pesoOnFly);
         peso = (long) ((pesoD*0.5) + (subPeso*0.5));
         return peso; 

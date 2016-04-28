@@ -767,12 +767,17 @@ public class TImagesBroker {
      * @since 1.0
      */    
     public static final int CAPTURAWEB =                   141;
-    
-    /** Esta constante indica cuantas im�genes debe cargar en memoria el dispensador de
-     * im�genes.
+    /** Image for ICMP packets.
      * @since 1.0
      */    
-    private static final int NUMERO_DE_IMAGENES =          142;
+    public static final int PDU_ICMP =                     142;
+    
+    /** This constant indicates how many images should be loaded into memory.
+     * @since 1.0
+     */    
+    private static final int NUMERO_DE_IMAGENES =          143;
+    
+    
 
     /** Este m�todo es el constructor de la clase; crea una nueva instancia de
      * TDispensadorDeImagenes.
@@ -934,6 +939,7 @@ public class TImagesBroker {
         imagen[ENLACE_RECUPERADO] = new javax.swing.ImageIcon(getClass().getResource("/imagenes/enlace_recuperado.png"));
         imagen[TRABAJANDO] = new javax.swing.ImageIcon(getClass().getResource("/imagenes/reloj_arena.png"));
         imagen[CAPTURAWEB] = new javax.swing.ImageIcon(getClass().getResource("/imagenes/capturaweb.png"));
+        imagen[PDU_ICMP] = new javax.swing.ImageIcon(getClass().getResource("/imagenes/pdu_icmp.png"));
     }
 
     /** Obtiene una de las im�genes del dispensador de im�genes como un onjeto Image.

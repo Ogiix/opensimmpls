@@ -15,8 +15,8 @@
  */
 package simMPLS.utils;
 
-/** Esta es la implementaci�n de un generador de identificadores num�ricos que no se
- * repiten y que se van incrementando hasta llegar a su l�mite m�ximo.
+/** This is the implementation of a generator numeric identifiers
+ * that are repeated and increasing until it reaches its maximum limit.
  * @version 1.0
  * @author <B>Manuel Dom�nguez Dorado</B><br><A
  * href="mailto:ingeniero@ManoloDominguez.com">ingeniero@ManoloDominguez.com</A><br><A href="http://www.ManoloDominguez.com" target="_blank">http://www.ManoloDominguez.com</A>

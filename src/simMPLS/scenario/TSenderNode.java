@@ -19,6 +19,7 @@ import simMPLS.protocols.TAbstractPDU;
 import simMPLS.protocols.TMPLSLabel;
 import simMPLS.protocols.TMPLSPDU;
 import simMPLS.protocols.TIPv4PDU;
+import simMPLS.protocols.TICMPPDU;
 import simMPLS.hardware.timer.TTimerEvent;
 import simMPLS.hardware.timer.ITimerEventListener;
 import simMPLS.hardware.ports.TFIFOPortSet;
@@ -29,6 +30,8 @@ import simMPLS.utils.TLongIDGenerator;
 import simMPLS.utils.TRotaryIDGenerator;
 import java.awt.*;
 import java.util.*;
+import simMPLS.utils.TraceResultSaver;
+
 
 /**
  * Esta clase implementa un nodo emisor de tr�fico.
@@ -56,6 +59,11 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
         tipoTrafico = TSenderNode.CONSTANTE;
         encapsularSobreMPLS = false;
         nivelDeGoS = 0;
+        customTTL=0;
+        traceroute=false;
+        tracerouteTTL=1;
+        destinationReached=false;
+        ready=true;
         LSPDeBackup = false;
         generadorDeAleatorios = new Random();
         etiquetaDeEmision = (16 + generadorDeAleatorios.nextInt(1000000));
@@ -63,6 +71,8 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
         tamDatosVariable = 0;
         estadisticas = new TSenderStats();
         estadisticas.activateStats(this.isGeneratingStats());
+        traceSaver = null;
+        saving = false;
     }
     
     /**
@@ -255,17 +265,31 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
      * funcionamiento. Es el n�cleo del nodo.
      * @since 1.0
      */
-    public void run() {
-        try {
-            this.generateSimulationEvent(new TSENodeCongested(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), 0));
-        } catch (Exception e) {
-            e.printStackTrace(); 
+    @Override
+    public void run() { 
+        if (this.getPorts().isArtificiallyCongested()) {
+            try {
+                this.generateSimulationEvent(new TSENodeCongested(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), this.getPorts().getCongestionLevel()));
+            } catch (Exception e) {
+                e.printStackTrace(); 
+            }
         }
         TAbstractPDU paqueteTmp = crearPaquete();
         boolean emito = false;
-        while (obtenerOctetosTransmitibles() > obtenerTamanioSiguientePaquete(paqueteTmp)) {
-            emito = true;
-            generarTrafico();
+        if(isTraceroute()){
+            if(!destinationReached && ready){
+                if(obtenerOctetosTransmitibles() > obtenerTamanioSiguientePaquete(paqueteTmp)){
+                    emito = true;
+                    ready=false;
+                    generarTrafico();
+                    tracerouteTTL++;
+                }
+            }
+        }else{
+            while (obtenerOctetosTransmitibles() > obtenerTamanioSiguientePaquete(paqueteTmp)) {
+                emito = true;
+                generarTrafico();
+            }
         }
         paqueteTmp = null;
         if (emito) {
@@ -273,7 +297,22 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
         } else {
             this.increaseStepsWithoutEmitting();
         }
+        recibirDatos();
         this.estadisticas.consolidateData(this.getAvailableTime());
+    }
+    
+    /**
+     * This method will put the node to cengested mode
+     * @since 2.0
+     */ 
+    @Override
+    public void toCongest(){
+        if (this.getPorts().isArtificiallyCongested()) {
+            this.getPorts().setArtificiallyCongested(false);
+        } else {
+            this.getPorts().setArtificiallyCongested(true);
+        }
+        super.setSayCongested(true);
     }
     
     /**
@@ -300,13 +339,18 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
      */    
     public int obtenerTamanioCabeceraSiguientePaquete(TAbstractPDU paquete) {
         TMPLSPDU paqueteMPLS = null;
+        TICMPPDU paqueteICMP = null;
         TIPv4PDU paqueteIPv4 = null;
         if (paquete.getType() == TAbstractPDU.MPLS) {
             paqueteMPLS = (TMPLSPDU) paquete;
             return paqueteMPLS.getSize();
-        } 
-        paqueteIPv4 = (TIPv4PDU) paquete;
-        return paqueteIPv4.getSize();
+        } else if(paquete.getType() == TAbstractPDU.ICMP){
+            paqueteICMP = (TICMPPDU) paquete;
+            return paqueteICMP.getSize();
+        } else {
+            paqueteIPv4 = (TIPv4PDU) paquete;
+            return paqueteIPv4.getSize();
+        }
     }
     
     /**
@@ -349,6 +393,9 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
                         } else if (paqueteConTamanio.getType() == TAbstractPDU.IPV4) {
                             TIPv4PDU paqueteIPv4 = (TIPv4PDU) paqueteConTamanio;
                             tipo = paqueteIPv4.getSubtype();
+                        } else if (paqueteConTamanio.getType() == TAbstractPDU.ICMP) {
+                            TICMPPDU paqueteICMP = (TICMPPDU) paqueteConTamanio;
+                            tipo = paqueteICMP.getSubtype();
                         }
                         this.generateSimulationEvent(new TSEPacketGenerated(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), tipo, paqueteConTamanio.getSize()));
                         this.generateSimulationEvent(new TSEPacketSent(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), tipo));
@@ -479,6 +526,7 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
      * Este m�todo toma como par�metro un paquete vacio y devuelve un paquete con datos
      * insertados. Los datos ser�n del tama�o que se haya estimado en los distintos
      * m�todos de la clase,pero ser� el correcto.
+     * Add the data to an empty paquet
      * @param paquete Paquete al que se quiere a�adir datos.
      * @return Paquete con datos insertados del tama�o correcto seg�n el tipo de gr�fico.
      * @since 1.0
@@ -486,6 +534,7 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
     public TAbstractPDU ponerTamanio(TAbstractPDU paquete) {
         TMPLSPDU paqueteMPLS = null;
         TIPv4PDU paqueteIPv4 = null;
+        TICMPPDU paqueteICMP = null;
         int bitsMaximos = obtenerLimiteBitsTransmitibles();
         int tamanioCabecera = 0;
         int tamanioDatos = 0;
@@ -520,6 +569,16 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
                     this.tamDatosVariable = this.generarTamanioSiguientePaquete();
                 }
                 return paqueteIPv4;
+            } else if (paquete.getType() == TAbstractPDU.ICMP) {
+                paqueteICMP = (TICMPPDU) paquete;
+                nsUsados = this.obtenerNsUsadosTotalOctetos(tamanioTotal);
+                this.availableNs -= nsUsados;
+                if (this.availableNs < 0)
+                    this.availableNs = 0;
+                if (this.tipoTrafico == this.VARIABLE) {
+                    this.tamDatosVariable = this.generarTamanioSiguientePaquete();
+                }
+                return paqueteICMP;
             }
         }
         return null;
@@ -537,6 +596,8 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
             if (this.encapsularSobreMPLS) {
                 if (valorGoS == TAbstractPDU.EXP_LEVEL0_WITHOUT_BACKUP_LSP) {
                     TMPLSPDU paquete = new TMPLSPDU(gIdent.getNextID(), getIPAddress(), this.IPDestino, 0);
+                    if(customTTL>0)
+                        paquete.getIPv4Header().setTTL(customTTL);
                     TMPLSLabel etiquetaMPLSDeEmision = new TMPLSLabel();
                     etiquetaMPLSDeEmision.setBoS(true);
                     etiquetaMPLSDeEmision.setEXP(0);
@@ -547,6 +608,8 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
                 } else {
                     TMPLSPDU paquete = new TMPLSPDU(gIdent.getNextID(), getIPAddress(), this.IPDestino, 0);
                     paquete.setSubtype(TAbstractPDU.MPLS_GOS);
+                    if(customTTL>0)
+                        paquete.getIPv4Header().setTTL(customTTL);
                     paquete.getIPv4Header().getOptionsField().setRequestedGoSLevel(valorGoS);
                     paquete.getIPv4Header().getOptionsField().setPacketLocalUniqueIdentifier(this.gIdGoS.getNextID());
                     TMPLSLabel etiquetaMPLSDeEmision = new TMPLSLabel();
@@ -563,13 +626,26 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
                     paquete.getLabelStack().pushTop(etiquetaMPLS1);
                     return paquete;
                 }
+            } else if(isICMP){
+                TICMPPDU paquete = new TICMPPDU(gIdent.getNextID(), getIPAddress(), this.IPDestino);
+                paquete.setSubtype(TAbstractPDU.ICMP);
+                if(customTTL>0)
+                    paquete.getIPv4Header().setTTL(customTTL);
+                if(isTraceroute()){
+                    paquete.getIPv4Header().setTTL(this.tracerouteTTL);
+                }
+                return paquete;
             } else {
                 if (valorGoS == TAbstractPDU.EXP_LEVEL0_WITHOUT_BACKUP_LSP) {
                     TIPv4PDU paquete = new TIPv4PDU(gIdent.getNextID(), getIPAddress(), this.IPDestino, 0);
+                    if(customTTL>0)
+                        paquete.getIPv4Header().setTTL(customTTL);
                     return paquete;
                 } else {
                     TIPv4PDU paquete = new TIPv4PDU(gIdent.getNextID(), getIPAddress(), this.IPDestino, 0);
                     paquete.setSubtype(TAbstractPDU.IPV4_GOS);
+                    if(customTTL>0)
+                        paquete.getIPv4Header().setTTL(customTTL);
                     paquete.getIPv4Header().getOptionsField().setRequestedGoSLevel(valorGoS);
                     paquete.getIPv4Header().getOptionsField().setPacketLocalUniqueIdentifier(this.gIdGoS.getNextID());
                     return paquete;
@@ -595,6 +671,39 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
             e.printStackTrace(); 
         }
         paquete = null;
+    }
+    
+     /**
+     * Este m�todo lee mientras puede los paquetes que hay en el buffer de recepci�n.
+     * @since 1.0
+     */    
+    public void recibirDatos() {
+        TPort p = this.ports.getPort(0);
+        TAbstractPDU paquete = null;
+        if (p != null) {
+            while (p.thereIsAPacketWaiting()) {
+                paquete = p.getPacket();
+                if(paquete.getType()==TAbstractPDU.ICMP){
+                    TICMPPDU icmpPacket = (TICMPPDU) paquete;
+                    if(this.saving)
+                        this.traceSaver.save(icmpPacket);
+                    if(this.traceroute){
+                        if(icmpPacket.getTypeICMP()==11 || icmpPacket.getTypeICMP()==0){
+                            ready=true;
+                            if(paquete.getIPv4Header().getOriginIPAddress().equals(this.IPDestino)){
+                                this.destinationReached = true;
+                                tracerouteTTL=0;
+                            }
+                        }else if(icmpPacket.getTypeICMP()==3){
+                            this.tracerouteTTL--;
+                            this.ready=true;
+                        }
+                    }
+                }
+                this.contabilizarPaquete(paquete, true);
+                paquete = null;
+            }
+        }
     }
     
     /**
@@ -647,6 +756,8 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
         this.setWellConfigured(false);
         if (this.getName().equals(""))
             return this.SIN_NOMBRE;
+        if (this.getIPAddress().isEmpty() && recfg)
+            return this.EMPTY_IP;
         boolean soloEspacios = true;
         for (int i=0; i < this.getName().length(); i++){
             if (this.getName().charAt(i) != ' ')
@@ -688,6 +799,7 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
             case NOMBRE_YA_EXISTE: return (java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("TConfigEmisor.NOMBRE_REPETIDO"));
             case SOLO_ESPACIOS: return (java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("TNodoEmisor.NoSoloEspacios"));
             case SIN_DESTINO: return (java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("TNodoEmisor.DestinoParaElTrafico"));
+            case EMPTY_IP: return "IP Address of the node is not present";
         }
         return ("");
     }
@@ -699,15 +811,14 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
      * contrario.
      * @since 1.0
      */    
+    @Override
     public String marshall() {
-        String cadena = "#Emisor#";
+        String cadena = "#Sender#";
         cadena += this.getID();
         cadena += "#";
         cadena += this.getName().replace('#', ' ');
         cadena += "#";
         cadena += this.getIPAddress();
-        cadena += "#";
-        cadena += this.getStatus();
         cadena += "#";
         cadena += this.getShowName();
         cadena += "#";
@@ -731,6 +842,14 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
         cadena += "#";
         cadena += this.obtenerTamDatosConstante();
         cadena += "#";
+        cadena += this.customTTL;
+        cadena += "#";
+        cadena += this.isICMP;
+        cadena += "#";
+        cadena += this.typeICMP;
+        cadena += "#";
+        cadena += this.traceroute;
+        cadena += "#";
         return cadena;
     }
     
@@ -741,28 +860,43 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
      * @return TRUE, si se consigue deserializar correctamente. FALSE en caso contrario.
      * @since 1.0
      */    
+    @Override
     public boolean unMarshall(String elemento) {
         String valores[] = elemento.split("#");
-        if (valores.length != 17) {
+        if (valores.length != 20) {
             return false;
         }
-        this.setID(Integer.valueOf(valores[2]).intValue());
+        this.setID(Integer.parseInt(valores[2]));
         this.setName(valores[3]);
         this.setIPAddress(valores[4]);
-        this.setStatus(Integer.valueOf(valores[5]).intValue());
-        this.setShowName(Boolean.valueOf(valores[6]).booleanValue());
-        this.setGenerateStats(Boolean.valueOf(valores[7]).booleanValue());
-        int posX = Integer.valueOf(valores[8]).intValue();
-        int posY = Integer.valueOf(valores[9]).intValue();
+        this.setStatus(0);
+        this.setShowName(Boolean.parseBoolean(valores[5]));
+        this.setGenerateStats(Boolean.parseBoolean(valores[6]));
+        int posX = Integer.parseInt(valores[7]);
+        int posY = Integer.parseInt(valores[8]);
         this.setPosition(new Point(posX+24, posY+24));
-        this.IPDestino = valores[10];
-        this.ponerLSPDeBackup(Boolean.valueOf(valores[11]).booleanValue());
-        this.ponerNivelDeGoS(Integer.valueOf(valores[12]).intValue());
-        this.ponerSobreMPLS(Boolean.valueOf(valores[13]).booleanValue());
-        this.ponerTasaTrafico(Integer.valueOf(valores[14]).intValue());
-        this.ponerTipoTrafico(Integer.valueOf(valores[15]).intValue());
-        this.ponerTamDatosConstante(Integer.valueOf(valores[16]).intValue());
+        this.IPDestino = valores[9];
+        this.ponerLSPDeBackup(Boolean.parseBoolean(valores[10]));
+        this.ponerNivelDeGoS(Integer.parseInt(valores[11]));
+        this.ponerSobreMPLS(Boolean.parseBoolean(valores[12]));
+        this.ponerTasaTrafico(Integer.parseInt(valores[13]));
+        this.ponerTipoTrafico(Integer.parseInt(valores[14]));
+        this.ponerTamDatosConstante(Integer.parseInt(valores[15]));
+        this.customTTL = Integer.parseInt(valores[16]);
+        this.isICMP = Boolean.parseBoolean(valores[17]);
+        this.typeICMP = Integer.parseInt(valores[18]);
+        this.traceroute = Boolean.parseBoolean(valores[19]);
         return true;
+    }
+    
+    @Override
+    public boolean addTableEntry(String tableEntry) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public String saveTableEntry() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /**
@@ -777,6 +911,23 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
         this.estadisticas.reset();
         estadisticas.activateStats(this.isGeneratingStats());
         this.resetStepsWithoutEmittingToZero();
+        this.tracerouteTTL=1;
+        this.destinationReached=false;
+        ready=true;
+        if(isICMP && saving){
+            String path="";
+            if(this.topology.getEscenarioPadre().obtenerFichero() != null)
+                path=this.topology.getEscenarioPadre().obtenerFichero().getPath();
+            if(this.traceSaver != null)
+                this.traceSaver.closeFile();
+            if(isTraceroute()){
+                this.traceSaver = new TraceResultSaver(path+"."+this.getName()+".traceroute.txt", TraceResultSaver.TRACEROUTE);
+                this.traceSaver.initializeFile("traceroute", this.getName(), this.IPDestino);
+            }else {
+                this.traceSaver = new TraceResultSaver(path+"."+this.getName()+".ping.txt", TraceResultSaver.PING);
+                this.traceSaver.initializeFile("ping", this.getName(), this.IPDestino);
+            }
+        }
     }
     
     /**
@@ -808,12 +959,89 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
     public void runGoSPDUStoreAndRetransmitProtocol(TMPLSPDU paquete, int pSalida) {
     }
     
+    /**
+     * @return the typeICMP
+     */
+    public int getTypeICMP() {
+        return typeICMP;
+    }
+
+    /**
+     * @param typeICMP the typeICMP to set
+     */
+    public void setTypeICMP(int typeICMP) {
+        this.typeICMP = typeICMP;
+    }
+    
+    /**
+     * @return the isICMP
+     */
+    public boolean getIsICMP() {
+        return isICMP;
+    }
+
+    /**
+     * @param isICMP the isICMP to set
+     */
+    public void setIsICMP(boolean isICMP) {
+        this.isICMP = isICMP;
+    }
+    
+    /**
+     * @return the customTTL
+     */
+    public int getCustomTTL() {
+        return customTTL;
+    }
+
+    /**
+     * @param customTTL the customTTL to set
+     */
+    public void setCustomTTL(int customTTL) {
+        this.customTTL = customTTL;
+    }
+    
+    /**
+     * @return the traceroute
+     */
+    public boolean isTraceroute() {
+        return traceroute;
+    }
+
+    /**
+     * @param traceroute the traceroute to set
+     */
+    public void setTraceroute(boolean traceroute) {
+        this.traceroute = traceroute;
+    }
+    
+    /**
+     * @return the saving
+     */
+    public boolean isSaving() {
+        return saving;
+    }
+
+    /**
+     * @param saving the saving to set
+     */
+    public void setSaving(boolean saving) {
+        this.saving = saving;
+    }
+    
     private String IPDestino;
     private int tasaTransferencia;
     private int tipoTrafico;
+    private boolean isICMP;
+    private int typeICMP;
+    private int customTTL;
     private boolean encapsularSobreMPLS;
     private int nivelDeGoS;
     private boolean LSPDeBackup;
+    private boolean traceroute;
+    private int tracerouteTTL;
+    private boolean destinationReached;
+    private boolean ready;
     
     private Random generadorDeAleatorios;
     private int etiquetaDeEmision;
@@ -822,6 +1050,9 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
     private int tamDatosVariable;
 
     private TLongIDGenerator gIdent;
+    
+    private TraceResultSaver traceSaver;
+    private boolean saving;
     
     /**
      * Este atributo almacenar� las estad�sticas del nodo.
@@ -866,5 +1097,12 @@ public class TSenderNode extends TNode implements ITimerEventListener, Runnable 
      * @since 1.0
      */    
     public static final int SIN_DESTINO = 4;
+    /**
+     * IP Address is empty
+     * @since 1.0
+     */    
+    public static final int EMPTY_IP = 5;
+
+    
     
 }

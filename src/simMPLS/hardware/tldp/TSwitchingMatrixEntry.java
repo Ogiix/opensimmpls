@@ -32,8 +32,9 @@ public class TSwitchingMatrixEntry {
      * @since 1.0
      */
     public TSwitchingMatrixEntry() {
-        this.incomingPortID = TSwitchingMatrixEntry.UNDEFINED;
         this.labelOrFEC = TSwitchingMatrixEntry.UNDEFINED;
+        this.mask = TSwitchingMatrixEntry.UNDEFINED;
+        this.mask = TSwitchingMatrixEntry.UNDEFINED;
         this.outgoingPortID = TSwitchingMatrixEntry.UNDEFINED;
         this.backupOutgoingPortID = TSwitchingMatrixEntry.UNDEFINED;
         this.label = TSwitchingMatrixEntry.UNDEFINED;
@@ -114,18 +115,18 @@ public class TSwitchingMatrixEntry {
      * argument.
      * @since 1.0
      */
-    public int getOppositePortID(int portID) {
-        if (this.incomingPortID == portID) {
-            return this.outgoingPortID;
-        }
-        if (this.outgoingPortID == portID) {
-            return this.incomingPortID;
-        }
-        if (this.backupOutgoingPortID == portID) {
-            return this.incomingPortID;
-        }
-        return this.incomingPortID;
-    }
+//    public int getOppositePortID(int portID) {
+//        if (this.incomingPortID == portID) {
+//            return this.outgoingPortID;
+//        }
+//        if (this.outgoingPortID == portID) {
+//            return this.incomingPortID;
+//        }
+//        if (this.backupOutgoingPortID == portID) {
+//            return this.incomingPortID;
+//        }
+//        return this.incomingPortID;
+//    }
 
     /**
      * This method check whether for the current entry a backup LSP has been
@@ -254,9 +255,9 @@ public class TSwitchingMatrixEntry {
      * @param incomingPortID The desired incoming portID.
      * @since 1.0
      */
-    public void setIncomingPortID(int incomingPortID) {
-        this.incomingPortID = incomingPortID;
-    }
+//    public void setIncomingPortID(int incomingPortID) {
+//        this.incomingPortID = incomingPortID;
+//    }
 
     /**
      * This method gets the incoming portID of this entry.
@@ -265,9 +266,9 @@ public class TSwitchingMatrixEntry {
      * @return The incoming portID of this entry.
      * @since 1.0
      */
-    public int getIncomingPortID() {
-        return this.incomingPortID;
-    }
+//    public int getIncomingPortID() {
+//        return this.incomingPortID;
+//    }
 
     /**
      * This method sets the LABEL or FEC value for this entry.
@@ -522,6 +523,34 @@ public class TSwitchingMatrixEntry {
     public int getUpstreamTLDPSessionID() {
         return this.upstreamTLDPSessionID;
     }
+    
+    /**
+     * @return the mask
+     */
+    public int getMask() {
+        return mask;
+    }
+
+    /**
+     * @param mask the mask to set
+     */
+    public void setMask(int mask) {
+        this.mask = mask;
+    }
+    
+    /**
+     * @return the nextHopIP
+     */
+    public String getNextHopIP() {
+        return nextHopIP;
+    }
+
+    /**
+     * @param nextHopIP the nextHopIP to set
+     */
+    public void setNextHopIP(String nextHopIP) {
+        this.nextHopIP = nextHopIP;
+    }
 
     /**
      * This method checks whether the current entry is configured correctly and
@@ -533,9 +562,6 @@ public class TSwitchingMatrixEntry {
      * @since 1.0
      */
     public boolean isAValidEntry() {
-        if (this.getIncomingPortID() == TSwitchingMatrixEntry.UNDEFINED) {
-            return false;
-        }
         if (this.getLabelOrFEC() == TSwitchingMatrixEntry.UNDEFINED) {
             return false;
         }
@@ -557,6 +583,59 @@ public class TSwitchingMatrixEntry {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * This method return this matrix entry in string format.
+     *
+     * @author Gaetan Bulpa
+     * @return this matrix entry in string format.
+     * @since 2.0
+     */
+    public String save() {
+        String tableEntry = "#";
+        switch(this.labelStackOperation){
+            case TSwitchingMatrixEntry.PUSH_LABEL:
+                tableEntry += "PUSH#";
+                tableEntry += IPAddress.intToIp(this.labelOrFEC);
+                tableEntry += "#";
+                tableEntry += IPAddress.intToIp(this.mask);
+                tableEntry += "#";
+                tableEntry += this.nextHopIP;
+                tableEntry += "#";
+                tableEntry += this.label;
+                tableEntry += "#";
+                break;
+            case TSwitchingMatrixEntry.SWAP_LABEL:
+                tableEntry += "SWAP#";
+                tableEntry += this.labelOrFEC;
+                tableEntry += "#";
+                tableEntry += this.label;
+                tableEntry += "#";
+                tableEntry += this.outgoingPortID;
+                tableEntry += "#";
+                break;
+            case TSwitchingMatrixEntry.POP_LABEL:
+                tableEntry += "POP#";
+                tableEntry += this.labelOrFEC;
+                tableEntry += "#";
+                tableEntry += this.outgoingPortID;
+                tableEntry += "#";
+                break;
+            case TSwitchingMatrixEntry.NOOP:
+                tableEntry += "ROUTE#";
+                tableEntry += IPAddress.intToIp(this.labelOrFEC);
+                tableEntry += "#";
+                tableEntry += IPAddress.intToIp(this.mask);
+                tableEntry += "#";
+                tableEntry += this.nextHopIP;
+                tableEntry += "#";
+                break;
+            default:
+                tableEntry += "Bad Entry#";
+                break;
+        }
+        return tableEntry;
     }
 
     // Entry types
@@ -586,8 +665,10 @@ public class TSwitchingMatrixEntry {
     private static final int TIMEOUT = 50000;
     private static final int LABEL_REQUEST_ATTEMPTS = 3;
 
-    private int incomingPortID;
+    //private int incomingPortID;
     private int labelOrFEC;
+    private int mask;
+    private String nextHopIP;
     private int outgoingPortID;
     private int backupOutgoingPortID;
     private int label;
@@ -600,4 +681,6 @@ public class TSwitchingMatrixEntry {
     private boolean isRequestForBackupLSP;
     private int timeout;
     private int labelRequestAttempts;
+
+    
 }

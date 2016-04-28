@@ -43,6 +43,25 @@ public class TMPLSPDU extends TAbstractPDU {
         this.mplsLabelStack = new TMPLSLabelStack();
         this.subType = TAbstractPDU.MPLS;
     }
+    
+    /**
+     * This method is the constructor of the class. It is create a new instance
+     * of TMPLSPDU.
+     *
+     * @author Gaetan Bulpa
+     * @param id Packet identifier.
+     * @param originIP IP addres of this packet's sender.
+     * @param targetIP IP addres of this packet's receiver.
+     * @param carriedPacket full packet carried by this MPLS packet.
+     * @since 2.0
+     */
+    public TMPLSPDU(long id, String originIP, String targetIP, TAbstractPDU carriedPacket) {
+        super(id, originIP, targetIP);
+        this.mplsLabelStack = new TMPLSLabelStack();
+        this.subType = TAbstractPDU.MPLS;
+        this.carriedPacket=carriedPacket;
+        this.tcpPayload = null;
+    }
 
     /**
      * This method creates a clone of this MPLS packet.
@@ -53,7 +72,7 @@ public class TMPLSPDU extends TAbstractPDU {
     public TMPLSPDU getAClon() {
         long auxID = this.getID();
         String auxOriginIP = this.getIPv4Header().getOriginIPAddress();
-        String auxTargetIP = this.getIPv4Header().getTailEndIPAddress();
+        String auxTargetIP = this.getIPv4Header().getTargetIPv4Address();
         // FIX: Define a class constant instead of using this harcoded value
         int auxTCPPayloadSize = this.tcpPayload.getSize() - 20;
         TMPLSPDU clonedMPLSPDU = new TMPLSPDU(auxID, auxOriginIP, auxTargetIP, auxTCPPayloadSize);
@@ -128,8 +147,12 @@ public class TMPLSPDU extends TAbstractPDU {
     public int getSize() {
         int auxSize = 0;
         auxSize += super.getIPv4Header().getSize(); // IPv4 header.
-        auxSize += this.tcpPayload.getSize(); // TCP payload.
         auxSize += (4 * this.mplsLabelStack.getSize()); // MPLS payload.
+        if(tcpPayload != null){
+            auxSize += this.tcpPayload.getSize(); // TCP payload.
+        }else{
+            auxSize += this.carriedPacket.getSize();
+        }
         return (auxSize);
     }
 
@@ -195,8 +218,24 @@ public class TMPLSPDU extends TAbstractPDU {
     public int getSubtype() {
         return this.subType;
     }
+    
+    /**
+     * @return the carriedPacket
+     */
+    public TAbstractPDU getCarriedPacket() {
+        return carriedPacket;
+    }
+
+    /**
+     * @param carriedPacket the carriedPacket to set
+     */
+    public void setCarriedPacket(TAbstractPDU carriedPacket) {
+        this.carriedPacket = carriedPacket;
+    }
 
     private int subType;
+    private TAbstractPDU carriedPacket;
     private TTCPPayload tcpPayload;
     private TMPLSLabelStack mplsLabelStack;
+    
 }

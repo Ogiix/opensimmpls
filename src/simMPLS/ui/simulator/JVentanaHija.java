@@ -17,7 +17,6 @@ package simMPLS.ui.simulator;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
@@ -53,6 +52,7 @@ import simMPLS.ui.dialogs.JVentanaLERA;
 import simMPLS.ui.dialogs.JVentanaLSR;
 import simMPLS.ui.dialogs.JVentanaLSRA;
 import simMPLS.ui.dialogs.JVentanaReceptor;
+import simMPLS.ui.dialogs.JWindowLinkDump;
 import simMPLS.ui.utils.TImagesBroker;
 import simMPLS.utils.JOSMFilter;
 import simMPLS.utils.TProgressEventListener;
@@ -116,8 +116,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         escenario = esc;
     }
     
-    /** Este m�todo se encarga de start los atributos de la clase que no hayan sido
- aun iniciados por NetBeans.
+    /** This method ensures start of the class attributes that have not yet been initiated by NetBeans.
      * @since 1.0
      */
     public void initComponents2() {
@@ -158,6 +157,8 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         grafico4 = null;
         grafico5 = null;
         grafico6 = null;
+        this.iconoLERA.setEnabled(false);
+        this.iconoLSRA.setEnabled(false);
     }
     
     /** Este m�todo es llamado desde el constructor para actualizar la mayor parte de
@@ -165,7 +166,8 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
      * m�todo creado por NetBeans automaticamente.
      * @since 1.0
      */
-    private void initComponents() {//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
         diseElementoPopUp = new javax.swing.JPopupMenu();
@@ -235,119 +237,114 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         pasoNs = new javax.swing.JSlider();
         etiquetaPasoNs = new javax.swing.JLabel();
 
-        diseElementoPopUp.setFont(new java.awt.Font("Dialog", 0, 12));
-        dEliminarMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        diseElementoPopUp.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+
+        dEliminarMenuItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         dEliminarMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.PopUpDisenio.mne.Delete").charAt(0));
-        dEliminarMenuItem.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.PopUpDisenio.Delete"));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes"); // NOI18N
+        dEliminarMenuItem.setText(bundle.getString("VentanaHija.PopUpDisenio.Delete")); // NOI18N
         dEliminarMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clicEnPopUpDisenioEliminar(evt);
             }
         });
-
         diseElementoPopUp.add(dEliminarMenuItem);
 
-        dVerNombreMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        dVerNombreMenuItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         dVerNombreMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.PopUpDisenio.mne.verNombre").charAt(0));
-        dVerNombreMenuItem.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.PopUpDisenio.verNombre"));
+        dVerNombreMenuItem.setText(bundle.getString("VentanaHija.PopUpDisenio.verNombre")); // NOI18N
         dVerNombreMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clicEnPopUpDisenioVerNombre(evt);
             }
         });
-
         diseElementoPopUp.add(dVerNombreMenuItem);
-
         diseElementoPopUp.add(jSeparator1);
 
-        dPropiedadesMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        dPropiedadesMenuItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         dPropiedadesMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.PopUpDisenio.mne.Propiedades").charAt(0));
-        dPropiedadesMenuItem.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.PopUpDisenio.Propiedades"));
+        dPropiedadesMenuItem.setText(bundle.getString("VentanaHija.PopUpDisenio.Propiedades")); // NOI18N
         dPropiedadesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clicEnPropiedadesPopUpDisenioElemento(evt);
             }
         });
-
         diseElementoPopUp.add(dPropiedadesMenuItem);
 
-        diseFondoPopUp.setFont(new java.awt.Font("Dialog", 0, 12));
-        dVerNombresNodosMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        diseFondoPopUp.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+
+        dVerNombresNodosMenuItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         dVerNombresNodosMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.mne.verTodosNodos").charAt(0));
-        dVerNombresNodosMenuItem.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.verTodosNodos"));
+        dVerNombresNodosMenuItem.setText(bundle.getString("popUpDisenioFondo.verTodosNodos")); // NOI18N
         dVerNombresNodosMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clicEnPopUpDisenioFondoVerNombreNodos(evt);
             }
         });
-
         diseFondoPopUp.add(dVerNombresNodosMenuItem);
 
-        dOcultarNombresNodosMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        dOcultarNombresNodosMenuItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         dOcultarNombresNodosMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.mne.ocultarTodosNodos").charAt(0));
-        dOcultarNombresNodosMenuItem.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.ocultarTodosNodos"));
+        dOcultarNombresNodosMenuItem.setText(bundle.getString("popUpDisenioFondo.ocultarTodosNodos")); // NOI18N
         dOcultarNombresNodosMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clicEnPopUpDisenioFondoOcultarNombreNodos(evt);
             }
         });
-
         diseFondoPopUp.add(dOcultarNombresNodosMenuItem);
 
-        dVerNombresEnlacesMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        dVerNombresEnlacesMenuItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         dVerNombresEnlacesMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.mne.verTodosEnlaces").charAt(0));
-        dVerNombresEnlacesMenuItem.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.verTodosEnlaces"));
+        dVerNombresEnlacesMenuItem.setText(bundle.getString("popUpDisenioFondo.verTodosEnlaces")); // NOI18N
         dVerNombresEnlacesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clicEnPopUpDisenioFondoVerNombreEnlaces(evt);
             }
         });
-
         diseFondoPopUp.add(dVerNombresEnlacesMenuItem);
 
-        dOcultarNombresEnlacesMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        dOcultarNombresEnlacesMenuItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         dOcultarNombresEnlacesMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.mne.ocultarTodosEnlaces").charAt(0));
-        dOcultarNombresEnlacesMenuItem.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.ocultarTodosEnlaces"));
+        dOcultarNombresEnlacesMenuItem.setText(bundle.getString("popUpDisenioFondo.ocultarTodosEnlaces")); // NOI18N
         dOcultarNombresEnlacesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clicEnPopUpDisenioFondoOcultarNombreEnlaces(evt);
             }
         });
-
         diseFondoPopUp.add(dOcultarNombresEnlacesMenuItem);
-
         diseFondoPopUp.add(jSeparator2);
 
-        dEliminarTodoMenuItem.setFont(new java.awt.Font("Dialog", 0, 12));
+        dEliminarTodoMenuItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         dEliminarTodoMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.mne.eliminarTodo").charAt(0));
-        dEliminarTodoMenuItem.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("popUpDisenioFondo.borrarTodo"));
+        dEliminarTodoMenuItem.setText(bundle.getString("popUpDisenioFondo.borrarTodo")); // NOI18N
         dEliminarTodoMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clicEnPopUpDisenioFondoEliminar(evt);
             }
         });
-
         diseFondoPopUp.add(dEliminarTodoMenuItem);
 
         setIconifiable(true);
         setMaximizable(true);
         setResizable(true);
-        setTitle(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Titulo"));
-        setFont(new java.awt.Font("Dialog", 0, 12));
-        setFrameIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.ICONO_VENTANA_INTERNA_MENU));
+        setTitle(bundle.getString("VentanaHija.Titulo")); // NOI18N
+        setAutoscrolls(true);
+        setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        setFrameIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.ICONO_VENTANA_INTERNA_MENU));
         setNormalBounds(new java.awt.Rectangle(10, 10, 100, 100));
         setPreferredSize(new java.awt.Dimension(100, 100));
         setVisible(true);
-        setAutoscrolls(true);
+
         jTabbedPane1.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
-        jTabbedPane1.setFont(new java.awt.Font("Dialog", 0, 12));
+        jTabbedPane1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+
         panelDisenioSuperior.setLayout(new java.awt.BorderLayout());
 
+        panelBotonesDisenio.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelBotonesDisenio.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        panelBotonesDisenio.setBorder(new javax.swing.border.EtchedBorder());
-        iconoEmisor.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.EMISOR_MENU));
-        iconoEmisor.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.Emisor"));
+        iconoEmisor.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.EMISOR_MENU));
+        iconoEmisor.setToolTipText(bundle.getString("VentanaHija.Topic.Emisor")); // NOI18N
         iconoEmisor.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 ratonEntraEnIconoEmisor(evt);
@@ -359,11 +356,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnAniadirEmisorDeTrafico(evt);
             }
         });
-
         panelBotonesDisenio.add(iconoEmisor);
 
-        iconoReceptor.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.RECEPTOR_MENU));
-        iconoReceptor.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.Receptor"));
+        iconoReceptor.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.RECEPTOR_MENU));
+        iconoReceptor.setToolTipText(bundle.getString("VentanaHija.Topic.Receptor")); // NOI18N
         iconoReceptor.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 ratonEntraEnIconoReceptor(evt);
@@ -375,11 +371,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnAniadirReceptor(evt);
             }
         });
-
         panelBotonesDisenio.add(iconoReceptor);
 
-        iconoLER.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.LER_MENU));
-        iconoLER.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.LER"));
+        iconoLER.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.LER_MENU));
+        iconoLER.setToolTipText(bundle.getString("VentanaHija.Topic.LER")); // NOI18N
         iconoLER.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 ratonEntraEnIconoLER(evt);
@@ -391,11 +386,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnAniadirLER(evt);
             }
         });
-
         panelBotonesDisenio.add(iconoLER);
 
-        iconoLERA.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.LERA_MENU));
-        iconoLERA.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.LERActivo"));
+        iconoLERA.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.LERA_MENU));
+        iconoLERA.setToolTipText(bundle.getString("VentanaHija.Topic.LERActivo")); // NOI18N
         iconoLERA.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 ratonEntraEnIconoLERA(evt);
@@ -407,11 +401,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnAniadirLERA(evt);
             }
         });
-
         panelBotonesDisenio.add(iconoLERA);
 
-        iconoLSR.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.LSR_MENU));
-        iconoLSR.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.LSR"));
+        iconoLSR.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.LSR_MENU));
+        iconoLSR.setToolTipText(bundle.getString("VentanaHija.Topic.LSR")); // NOI18N
         iconoLSR.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 ratonEntraEnIconoLSR(evt);
@@ -423,11 +416,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnAniadirLSR(evt);
             }
         });
-
         panelBotonesDisenio.add(iconoLSR);
 
-        iconoLSRA.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.LSRA_MENU));
-        iconoLSRA.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.LSRActivo"));
+        iconoLSRA.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.LSRA_MENU));
+        iconoLSRA.setToolTipText(bundle.getString("VentanaHija.Topic.LSRActivo")); // NOI18N
         iconoLSRA.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 ratonEntraEnIconoLSRA(evt);
@@ -439,11 +431,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnAniadirLSRA(evt);
             }
         });
-
         panelBotonesDisenio.add(iconoLSRA);
 
-        iconoEnlace.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.ENLACE_MENU));
-        iconoEnlace.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.Enlace"));
+        iconoEnlace.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.ENLACE_MENU));
+        iconoEnlace.setToolTipText(bundle.getString("VentanaHija.Topic.Enlace")); // NOI18N
         iconoEnlace.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 clicEnAniadirEnlace(evt);
@@ -455,16 +446,14 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 ratonSaleDeIconoEnlace(evt);
             }
         });
-
         panelBotonesDisenio.add(iconoEnlace);
 
         panelDisenioSuperior.add(panelBotonesDisenio, java.awt.BorderLayout.NORTH);
 
-        jScrollPane1.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        panelDisenio.setLayout(null);
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         panelDisenio.setBackground(java.awt.Color.white);
-        panelDisenio.setBorder(new javax.swing.border.EtchedBorder());
+        panelDisenio.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelDisenio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 clicDerechoEnPanelDisenio(evt);
@@ -484,20 +473,20 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 ratonSobrePanelDisenio(evt);
             }
         });
-
+        panelDisenio.setLayout(null);
         jScrollPane1.setViewportView(panelDisenio);
 
         panelDisenioSuperior.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Tab.Disenio"), dispensadorDeImagenes.obtenerIcono(TImagesBroker.DISENIO), panelDisenioSuperior, java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.A_panel_to_design_network_topology"));
+        jTabbedPane1.addTab(bundle.getString("VentanaHija.Tab.Disenio"), dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.DISENIO), panelDisenioSuperior, bundle.getString("VentanaHija.A_panel_to_design_network_topology")); // NOI18N
 
         panelSimulacionSuperior.setLayout(new java.awt.BorderLayout());
 
+        panelBotonesSimulacion.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelBotonesSimulacion.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        panelBotonesSimulacion.setBorder(new javax.swing.border.EtchedBorder());
-        iconoComenzar.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.BOTON_GENERAR));
-        iconoComenzar.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.Generar"));
+        iconoComenzar.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.BOTON_GENERAR));
+        iconoComenzar.setToolTipText(bundle.getString("VentanaHija.Topic.Generar")); // NOI18N
         iconoComenzar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 ratonEntraEnIconoComenzar(evt);
@@ -509,11 +498,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnComenzar(evt);
             }
         });
-
         panelBotonesSimulacion.add(iconoComenzar);
 
-        iconoFinalizar.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.BOTON_PARAR));
-        iconoFinalizar.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.Finalizar"));
+        iconoFinalizar.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.BOTON_PARAR));
+        iconoFinalizar.setToolTipText(bundle.getString("VentanaHija.Topic.Finalizar")); // NOI18N
         iconoFinalizar.setEnabled(false);
         iconoFinalizar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -526,11 +514,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnFinalizar(evt);
             }
         });
-
         panelBotonesSimulacion.add(iconoFinalizar);
 
-        iconoReanudar.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.BOTON_COMENZAR));
-        iconoReanudar.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.Simulacion"));
+        iconoReanudar.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.BOTON_COMENZAR));
+        iconoReanudar.setToolTipText(bundle.getString("VentanaHija.Topic.Simulacion")); // NOI18N
         iconoReanudar.setEnabled(false);
         iconoReanudar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -543,11 +530,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnReanudar(evt);
             }
         });
-
         panelBotonesSimulacion.add(iconoReanudar);
 
-        iconoPausar.setIcon(dispensadorDeImagenes.obtenerIcono(TImagesBroker.BOTON_PAUSA));
-        iconoPausar.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Topic.Detener"));
+        iconoPausar.setIcon(dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.BOTON_PAUSA));
+        iconoPausar.setToolTipText(bundle.getString("VentanaHija.Topic.Detener")); // NOI18N
         iconoPausar.setEnabled(false);
         iconoPausar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -560,11 +546,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicAlPausar(evt);
             }
         });
-
         panelBotonesSimulacion.add(iconoPausar);
 
-        barraDeProgreso.setFont(new java.awt.Font("Dialog", 0, 12));
-        barraDeProgreso.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.BarraProgreso.tooltip"));
+        barraDeProgreso.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        barraDeProgreso.setToolTipText(bundle.getString("VentanaHija.BarraProgreso.tooltip")); // NOI18N
         barraDeProgreso.setStringPainted(true);
         panelBotonesSimulacion.add(barraDeProgreso);
 
@@ -573,27 +558,27 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         mlsPorTic.setMinimum(1);
         mlsPorTic.setMinorTickSpacing(1);
         mlsPorTic.setSnapToTicks(true);
-        mlsPorTic.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Simulacion.SelectorDeVelocidad.tooltip"));
+        mlsPorTic.setToolTipText(bundle.getString("VentanaHija.Simulacion.SelectorDeVelocidad.tooltip")); // NOI18N
         mlsPorTic.setPreferredSize(new java.awt.Dimension(100, 20));
         mlsPorTic.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 mlsPorTicCambiado(evt);
             }
         });
-
         panelBotonesSimulacion.add(mlsPorTic);
 
-        etiquetaMlsPorTic.setFont(new java.awt.Font("Dialog", 0, 10));
+        etiquetaMlsPorTic.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         etiquetaMlsPorTic.setForeground(new java.awt.Color(102, 102, 102));
         panelBotonesSimulacion.add(etiquetaMlsPorTic);
 
-        crearTraza.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.Create_trace_file"));
+        crearTraza.setText(bundle.getString("JVentanaHija.Create_trace_file")); // NOI18N
         panelBotonesSimulacion.add(crearTraza);
 
         panelSimulacionSuperior.add(panelBotonesSimulacion, java.awt.BorderLayout.NORTH);
 
-        jScrollPane2.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        panelSimulacion.setBorder(new javax.swing.border.EtchedBorder());
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+
+        panelSimulacion.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelSimulacion.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 ratonPulsadoYSoltadoEnPanelSimulacion(evt);
@@ -613,19 +598,18 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 ratonSobrePanelSimulacion(evt);
             }
         });
-
         jScrollPane2.setViewportView(panelSimulacion);
 
         panelSimulacionSuperior.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Tab.Simulacion"), dispensadorDeImagenes.obtenerIcono(TImagesBroker.SIMULACION), panelSimulacionSuperior, java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.A_panel_to_generate_and_play_simulation."));
+        jTabbedPane1.addTab(bundle.getString("VentanaHija.Tab.Simulacion"), dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.SIMULACION), panelSimulacionSuperior, bundle.getString("VentanaHija.A_panel_to_generate_and_play_simulation.")); // NOI18N
 
         panelAnalisisSuperior.setLayout(new java.awt.BorderLayout());
 
+        panelSeleccionElemento.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelSeleccionElemento.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        panelSeleccionElemento.setBorder(new javax.swing.border.EtchedBorder());
-        jLabel1.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.SelcUnElemParaVerDatos"));
+        jLabel1.setText(bundle.getString("JVentanaHija.SelcUnElemParaVerDatos")); // NOI18N
         panelSeleccionElemento.add(jLabel1);
 
         selectorElementoEstadisticas.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "" }));
@@ -634,31 +618,31 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnSeleccionalElementoEstadistica(evt);
             }
         });
-
         panelSeleccionElemento.add(selectorElementoEstadisticas);
 
         panelAnalisisSuperior.add(panelSeleccionElemento, java.awt.BorderLayout.NORTH);
 
-        jScrollPane4.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        panelAnalisis.setLayout(new java.awt.GridBagLayout());
+        jScrollPane4.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         panelAnalisis.setBackground(new java.awt.Color(252, 246, 226));
-        panelFijo.setLayout(new java.awt.GridBagLayout());
+        panelAnalisis.setLayout(new java.awt.GridBagLayout());
 
         panelFijo.setBackground(new java.awt.Color(252, 246, 226));
+        panelFijo.setLayout(new java.awt.GridBagLayout());
+
         etiquetaEstadisticasTituloEscenario.setBackground(new java.awt.Color(252, 246, 226));
-        etiquetaEstadisticasTituloEscenario.setFont(new java.awt.Font("Arial", 1, 18));
+        etiquetaEstadisticasTituloEscenario.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         etiquetaEstadisticasTituloEscenario.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        etiquetaEstadisticasTituloEscenario.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.TituloDelEscenario"));
+        etiquetaEstadisticasTituloEscenario.setText(bundle.getString("JVentanaHija.TituloDelEscenario")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         panelFijo.add(etiquetaEstadisticasTituloEscenario, gridBagConstraints);
 
         etiquetaEstadisticasNombreAutor.setBackground(new java.awt.Color(252, 246, 226));
-        etiquetaEstadisticasNombreAutor.setFont(new java.awt.Font("Arial", 1, 14));
+        etiquetaEstadisticasNombreAutor.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         etiquetaEstadisticasNombreAutor.setForeground(new java.awt.Color(102, 0, 51));
         etiquetaEstadisticasNombreAutor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        etiquetaEstadisticasNombreAutor.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.AutorDelEscenario"));
+        etiquetaEstadisticasNombreAutor.setText(bundle.getString("JVentanaHija.AutorDelEscenario")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -667,10 +651,10 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
 
         areaEstadisticasDescripcion.setBackground(new java.awt.Color(252, 246, 226));
         areaEstadisticasDescripcion.setEditable(false);
-        areaEstadisticasDescripcion.setFont(new java.awt.Font("MonoSpaced", 0, 11));
+        areaEstadisticasDescripcion.setFont(new java.awt.Font("MonoSpaced", 0, 11)); // NOI18N
         areaEstadisticasDescripcion.setLineWrap(true);
         areaEstadisticasDescripcion.setRows(3);
-        areaEstadisticasDescripcion.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.DescripcionDelEscenario"));
+        areaEstadisticasDescripcion.setText(bundle.getString("JVentanaHija.DescripcionDelEscenario")); // NOI18N
         areaEstadisticasDescripcion.setWrapStyleWord(true);
         areaEstadisticasDescripcion.setMinimumSize(new java.awt.Dimension(500, 16));
         areaEstadisticasDescripcion.setPreferredSize(new java.awt.Dimension(500, 48));
@@ -683,9 +667,9 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         panelFijo.add(areaEstadisticasDescripcion, gridBagConstraints);
 
         etiquetaNombreElementoEstadistica.setBackground(new java.awt.Color(252, 246, 226));
-        etiquetaNombreElementoEstadistica.setFont(new java.awt.Font("Arial", 1, 14));
+        etiquetaNombreElementoEstadistica.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         etiquetaNombreElementoEstadistica.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        etiquetaNombreElementoEstadistica.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.SeleccioneNodoAInspeccionar"));
+        etiquetaNombreElementoEstadistica.setText(bundle.getString("JVentanaHija.SeleccioneNodoAInspeccionar")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -697,20 +681,21 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
 
         panelAnalisisSuperior.add(jScrollPane4, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.Analisis"), dispensadorDeImagenes.obtenerIcono(TImagesBroker.ANALISIS), panelAnalisisSuperior, java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.Analisis.Tooltip"));
+        jTabbedPane1.addTab(bundle.getString("JVentanaHija.Analisis"), dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.ANALISIS), panelAnalisisSuperior, bundle.getString("JVentanaHija.Analisis.Tooltip")); // NOI18N
 
         panelOpcionesSuperior.setLayout(new java.awt.BorderLayout());
 
         jScrollPane3.setBorder(null);
-        panelOpciones.setLayout(new java.awt.GridBagLayout());
 
         panelOpciones.setPreferredSize(new java.awt.Dimension(380, 230));
+        panelOpciones.setLayout(new java.awt.GridBagLayout());
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("VentanaHija.GParameters"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12))); // NOI18N
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jPanel3.setBorder(new javax.swing.border.TitledBorder(null, java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.GParameters"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
-        jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel5.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel5.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Scene_title"));
+        jLabel5.setText(bundle.getString("VentanaHija.Scene_title")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -719,16 +704,16 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jLabel5, gridBagConstraints);
 
-        nombreEscenario.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Type_a__title_of_the_scene"));
+        nombreEscenario.setToolTipText(bundle.getString("VentanaHija.Type_a__title_of_the_scene")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 200.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(nombreEscenario, gridBagConstraints);
 
-        jLabel6.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel6.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel6.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Scene_author"));
+        jLabel6.setText(bundle.getString("VentanaHija.Scene_author")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -736,7 +721,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jLabel6, gridBagConstraints);
 
-        nombreAutor.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Type_de_name_of_the_author"));
+        nombreAutor.setToolTipText(bundle.getString("VentanaHija.Type_de_name_of_the_author")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -745,9 +730,9 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(nombreAutor, gridBagConstraints);
 
-        jLabel7.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel7.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel7.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Description"));
+        jLabel7.setText(bundle.getString("VentanaHija.Description")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -755,7 +740,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jLabel7, gridBagConstraints);
 
-        descripcionEscenario.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Enter_a_short_description."));
+        descripcionEscenario.setToolTipText(bundle.getString("VentanaHija.Enter_a_short_description.")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -773,22 +758,22 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelOpciones.add(jPanel3, gridBagConstraints);
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("VentanaHija.TParameters"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12))); // NOI18N
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        jPanel2.setBorder(new javax.swing.border.TitledBorder(null, java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.TParameters"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
-        jLabel3.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel3.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel3.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Duration"));
+        jLabel3.setText(bundle.getString("VentanaHija.Duration")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 100.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jLabel3, gridBagConstraints);
 
-        duracionMs.setMajorTickSpacing(2);
-        duracionMs.setMaximum(2);
+        duracionMs.setMajorTickSpacing(10);
+        duracionMs.setMaximum(10);
         duracionMs.setMinorTickSpacing(1);
-        duracionMs.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Slide_it_to_change_the_ms._component_of_simulation_duration."));
+        duracionMs.setToolTipText(bundle.getString("VentanaHija.Slide_it_to_change_the_ms._component_of_simulation_duration.")); // NOI18N
         duracionMs.setValue(0);
         duracionMs.setMaximumSize(new java.awt.Dimension(30, 20));
         duracionMs.setMinimumSize(new java.awt.Dimension(30, 24));
@@ -798,16 +783,15 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnDuracionMs(evt);
             }
         });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 150.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(duracionMs, gridBagConstraints);
 
-        etiquetaDuracionMs.setFont(new java.awt.Font("Dialog", 0, 10));
+        etiquetaDuracionMs.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         etiquetaDuracionMs.setForeground(new java.awt.Color(102, 102, 102));
-        etiquetaDuracionMs.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.ms."));
+        etiquetaDuracionMs.setText(bundle.getString("VentanaHija.ms.")); // NOI18N
         etiquetaDuracionMs.setMaximumSize(new java.awt.Dimension(30, 14));
         etiquetaDuracionMs.setMinimumSize(new java.awt.Dimension(30, 14));
         etiquetaDuracionMs.setPreferredSize(new java.awt.Dimension(30, 14));
@@ -820,7 +804,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         duracionNs.setMajorTickSpacing(1000);
         duracionNs.setMaximum(999999);
         duracionNs.setMinorTickSpacing(100);
-        duracionNs.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Slide_it_to_change_the_ns._component_of_simulation_duration."));
+        duracionNs.setToolTipText(bundle.getString("VentanaHija.Slide_it_to_change_the_ns._component_of_simulation_duration.")); // NOI18N
         duracionNs.setValue(100000);
         duracionNs.setMaximumSize(new java.awt.Dimension(32767, 20));
         duracionNs.setMinimumSize(new java.awt.Dimension(36, 20));
@@ -830,16 +814,15 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnDuracionNs(evt);
             }
         });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 150.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(duracionNs, gridBagConstraints);
 
-        etiquetaDuracionNs.setFont(new java.awt.Font("Dialog", 0, 10));
+        etiquetaDuracionNs.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         etiquetaDuracionNs.setForeground(new java.awt.Color(102, 102, 102));
-        etiquetaDuracionNs.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.ns."));
+        etiquetaDuracionNs.setText(bundle.getString("VentanaHija.ns.")); // NOI18N
         etiquetaDuracionNs.setMaximumSize(new java.awt.Dimension(40, 14));
         etiquetaDuracionNs.setMinimumSize(new java.awt.Dimension(40, 14));
         etiquetaDuracionNs.setPreferredSize(new java.awt.Dimension(40, 14));
@@ -849,9 +832,9 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(etiquetaDuracionNs, gridBagConstraints);
 
-        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Step"));
+        jLabel4.setText(bundle.getString("VentanaHija.Step")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -864,7 +847,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         pasoNs.setMaximum(999999);
         pasoNs.setMinimum(1);
         pasoNs.setMinorTickSpacing(100);
-        pasoNs.setToolTipText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Slide_it_to_change_the_step_duration_(ns).."));
+        pasoNs.setToolTipText(bundle.getString("VentanaHija.Slide_it_to_change_the_step_duration_(ns)..")); // NOI18N
         pasoNs.setValue(10000);
         pasoNs.setMaximumSize(new java.awt.Dimension(32767, 20));
         pasoNs.setPreferredSize(new java.awt.Dimension(100, 20));
@@ -873,7 +856,6 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                 clicEnPasoNs(evt);
             }
         });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -882,9 +864,9 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(pasoNs, gridBagConstraints);
 
-        etiquetaPasoNs.setFont(new java.awt.Font("Dialog", 0, 10));
+        etiquetaPasoNs.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         etiquetaPasoNs.setForeground(new java.awt.Color(102, 102, 102));
-        etiquetaPasoNs.setText(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.ns."));
+        etiquetaPasoNs.setText(bundle.getString("VentanaHija.ns.")); // NOI18N
         etiquetaPasoNs.setMaximumSize(new java.awt.Dimension(40, 14));
         etiquetaPasoNs.setMinimumSize(new java.awt.Dimension(40, 14));
         etiquetaPasoNs.setPreferredSize(new java.awt.Dimension(40, 14));
@@ -909,31 +891,30 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
 
         panelOpcionesSuperior.add(jScrollPane3, java.awt.BorderLayout.NORTH);
 
-        jTabbedPane1.addTab(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Options"), dispensadorDeImagenes.obtenerIcono(TImagesBroker.OPCIONES), panelOpcionesSuperior, java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("VentanaHija.Options_about_the_scene"));
+        jTabbedPane1.addTab(bundle.getString("VentanaHija.Options"), dispensadorDeImagenes.obtenerIcono(simMPLS.ui.utils.TImagesBroker.OPCIONES), panelOpcionesSuperior, bundle.getString("VentanaHija.Options_about_the_scene")); // NOI18N
 
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         pack();
-    }//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
 
+    /** Action when the mouse button is pressed and released
+     * @since 1.0
+     */
     private void ratonPulsadoYSoltadoEnPanelSimulacion(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ratonPulsadoYSoltadoEnPanelSimulacion
         if (evt.getButton() == MouseEvent.BUTTON1) {
             TTopologyElement et = escenario.getTopology().obtenerElementoEnPosicion(evt.getPoint());
             if (et != null) {
                 if (et.getElementType() == TTopologyElement.NODO) {
                     TNode nt = (TNode) et;
-                    if (nt.getPorts().isArtificiallyCongested()) {
-                        nt.getPorts().setArtificiallyCongested(false);
-                    } else {
-                        nt.getPorts().setArtificiallyCongested(true);
-                    }
+                    nt.toCongest();
                 } else if (et.getElementType() == TTopologyElement.LINK) {
-                    TLink ent = (TLink) et;
-                    if (ent.isBroken()) {
-                        ent.ponerEnlaceCaido(false);
-                    } else {
-                        ent.ponerEnlaceCaido(true);
-                    }
+//                    TLink ent = (TLink) et;
+//                    if (ent.isBroken()) {
+//                        ent.ponerEnlaceCaido(false);
+//                    } else {
+//                        ent.ponerEnlaceCaido(true);
+//                    }
                 }
             } else {
                     if (this.panelSimulacion.obtenerMostrarLeyenda()) {
@@ -942,12 +923,26 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
                         this.panelSimulacion.ponerMostrarLeyenda(true);
                     }
             }
+        }else if(evt.getButton() == MouseEvent.BUTTON3){
+            TTopologyElement et = escenario.getTopology().obtenerElementoEnPosicion(evt.getPoint());
+            if(et != null){
+                if(et.getElementType() == TTopologyElement.LINK){
+                    TLink ent = (TLink) et;
+                    if (!ent.isBroken()) {
+                        JWindowLinkDump linkWindow = new JWindowLinkDump(VentanaPadre, true, ent);
+                        linkWindow.setVisible(true);
+                    }
+                }
+            }
         } else {
             elementoDisenioClicDerecho = null;
             panelDisenio.repaint();
         }
     }//GEN-LAST:event_ratonPulsadoYSoltadoEnPanelSimulacion
 
+    /** Action when selecting static element.
+     * @since 1.0
+     */
     private void clicEnSeleccionalElementoEstadistica(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clicEnSeleccionalElementoEstadistica
         GridBagConstraints gbc = null;
         if (this.selectorElementoEstadisticas.getSelectedIndex() == 0) {
@@ -1015,6 +1010,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
      * Este m�todo se llama cuando se arrastra el rat�n sobre el panel de dise�o. Si se
      * hace sobre un elemento que estaba seleccionado, el resultado es que ese elemento
      * se mueve donde vaya el cursor del rat�n.
+     * Move an object of the simulation
      * @param evt El evento que provoca la llamada.
      * @since 1.0
      */    
@@ -1042,6 +1038,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
      * Este m�todo se llama cuando se libera un bot�n del rat�n estando en el panel de
      * simulaci�n. Si se hace sobre un elemento que estaba seleccionado, deja de
      * estarlo.
+     * When the mouse button is released on a node
      * @param evt El evento que genera la llamada.
      * @since 1.0
      */    
@@ -1060,6 +1057,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
      * Este m�todo se llama cuando se presiona un bot�n del rat�n en el panel de
      * simulaci�n. Si se hace sobre un elemento de la topolog�a, lo marca como
      * seleccionado.
+     * When the mouse button is pressed on a node
      * @since 1.0
      * @param evt El evento que provoca la llamada.
      */    
@@ -1089,6 +1087,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
      * Este m�todo se llama cuando se hace clic derecho sobre un elemento en la ventana
      * de dise�o y se selecciona la opci�n "Propiedades" del men� emergente. Se encarga
      * de mostrar en pantalla la ventana de configuraci�n del elemento en cuesti�n.
+     * Right clic on a node + properties menu
      * @since 1.0
      * @param evt El evento que provoca la llamada.
      */    
@@ -1151,6 +1150,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
     /** Este m�todo se encarga de controlar que la duraci�n de la simulaci�on y del paso
      * de la misma sea acorde con los delays de los enlaces. Adem�s se encarga de la
      * actualizaci�n de la interfaz en esos lugares.
+     * Timing controls
      * @since 1.0
      */
     public void controlarParametrosTemporales() {
@@ -1177,6 +1177,7 @@ public class JVentanaHija extends javax.swing.JInternalFrame {
     
     /** Este m�todo se llama autom�ticamente cuando se cambia la duraci�n en
      * nanosegundos del paso de simulaci�n.
+     * Changing the timing of the simulation
      * @since 1.0
      * @param evt Evento que hace que el m�todo salte.
      */
@@ -1217,6 +1218,7 @@ private void mlsPorTicCambiado(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:e
 
 /** Este m�todo se ejecuta cuando se hace clic en la opci�n de ocultar el nombre de
  * todos los enlaces, en el men� emergente de la pantalla de Disenio.
+ * Display node names button
  * @since 1.0
  * @param evt El evento que hace que se dispare este m�todo.
  */
@@ -1233,6 +1235,7 @@ private void clicEnPopUpDisenioFondoOcultarNombreEnlaces(java.awt.event.ActionEv
 
 /** Este m�todo se ejecuta cuando se hace clic en la opci�n de ver el nombre de
  * todos los enlaces, en el men� emergente de la pantalla de Disenio.
+ * Display node names button
  * @since 1.0
  * @param evt El evento que hace que se dispare este m�todo.
  */
@@ -1339,8 +1342,8 @@ public void ponerEscenario(TScenario esc) {
     this.controlarParametrosTemporales();
 }
 
-/** Este m�todo se ejecuta cuando se hace clic en la opci�n de a�adir un enlace
- * nuevo en la barra de herramientas de la pantalla de dise�o.
+/** 
+ * This method is executed when you click on the option to add a new link in the toolbar of the screen design.
  * @since 1.0
  * @param evt Evento que hace que se dispare este m�todo.
  */
@@ -1479,36 +1482,37 @@ private void clicDerechoEnPanelDisenio(java.awt.event.MouseEvent evt) {//GEN-FIR
 
 /** Este m�todo se ejecuta cuando se hace clic en la opci�n de a�adir un LSRA
  * nuevo en la barra de herramientas de la pantalla de dise�o.
+ * This method is executed when you click on the option to add one LSRA new toolbar on the screen design.
  * @since 1.0
  * @param evt El evento que hace que se dispare este m�todo.
  */
 private void clicEnAniadirLSRA(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clicEnAniadirLSRA
-    TActiveLSRNode lsra = null;
-    try {
-        lsra = new TActiveLSRNode(escenario.getTopology().getItemIdentifierGenerator().getNew(), escenario.getTopology().getIPAddressGenerator().obtenerIP(), escenario.getTopology().getEventIDGenerator(), escenario.getTopology());
-    } catch (Exception e) {
-        JVentanaError err;
-        err = new JVentanaError(VentanaPadre, true, dispensadorDeImagenes);
-        err.mostrarMensaje(e.toString());
-        err.show();
-    }
-    JVentanaLSRA vlsra = new JVentanaLSRA(escenario.getTopology(), panelDisenio, dispensadorDeImagenes, VentanaPadre, true);
-    vlsra.ponerConfiguracion(lsra, false);
-    vlsra.show();
-    if (lsra.isWellConfigured()) {
-        try {
-            escenario.getTopology().addNode(lsra);
-            panelDisenio.repaint();
-        } catch (Exception e) {
-            JVentanaError err;
-            err = new JVentanaError(VentanaPadre, true, dispensadorDeImagenes);
-            err.mostrarMensaje(e.toString());
-            err.show();
-        };
-        this.escenario.setModified(true);
-    } else {
-        lsra = null;
-    }
+//    TActiveLSRNode lsra = null;
+//    try {
+//        lsra = new TActiveLSRNode(escenario.getTopology().getItemIdentifierGenerator().getNew(), escenario.getTopology().getIPAddressGenerator().obtenerIP(), escenario.getTopology().getEventIDGenerator(), escenario.getTopology());
+//    } catch (Exception e) {
+//        JVentanaError err;
+//        err = new JVentanaError(VentanaPadre, true, dispensadorDeImagenes);
+//        err.mostrarMensaje(e.toString());
+//        err.show();
+//    }
+//    JVentanaLSRA vlsra = new JVentanaLSRA(escenario.getTopology(), panelDisenio, dispensadorDeImagenes, VentanaPadre, true);
+//    vlsra.ponerConfiguracion(lsra, false);
+//    vlsra.show();
+//    if (lsra.isWellConfigured()) {
+//        try {
+//            escenario.getTopology().addNode(lsra);
+//            panelDisenio.repaint();
+//        } catch (Exception e) {
+//            JVentanaError err;
+//            err = new JVentanaError(VentanaPadre, true, dispensadorDeImagenes);
+//            err.mostrarMensaje(e.toString());
+//            err.show();
+//        };
+//        this.escenario.setModified(true);
+//    } else {
+//        lsra = null;
+//    }
 }//GEN-LAST:event_clicEnAniadirLSRA
 
 /** Este m�todo se ejecuta cuando se hace clic en la opci�n de a�adir un LSR
@@ -1551,38 +1555,41 @@ private void clicEnAniadirLSR(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
  * @param evt Evento que hace que se dispare este m�todo.
  */
 private void clicEnAniadirLERA(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clicEnAniadirLERA
-    TActiveLERNode lera = null;
-    try {
-        lera = new TActiveLERNode(escenario.getTopology().getItemIdentifierGenerator().getNew(), escenario.getTopology().getIPAddressGenerator().obtenerIP(), escenario.getTopology().getEventIDGenerator(), escenario.getTopology());
-    } catch (Exception e) {
-        JVentanaError err;
-        err = new JVentanaError(VentanaPadre, true, dispensadorDeImagenes);
-        err.mostrarMensaje(e.toString());
-        err.show();
-    }
-    JVentanaLERA vlera = new JVentanaLERA(escenario.getTopology(), panelDisenio, dispensadorDeImagenes, VentanaPadre, true);
-    vlera.ponerConfiguracion(lera, false);
-    vlera.show();
-    if (lera.isWellConfigured()) {
-        try {
-            escenario.getTopology().addNode(lera);
-            panelDisenio.repaint();
-        } catch (Exception e) {
-            JVentanaError err;
-            err = new JVentanaError(VentanaPadre, true, dispensadorDeImagenes);
-            err.mostrarMensaje(e.toString());
-            err.show();
-        };
-        this.escenario.setModified(true);
-    } else {
-        lera = null;
-    }
+//    TActiveLERNode lera = null;
+//    try {
+//        lera = new TActiveLERNode(escenario.getTopology().getItemIdentifierGenerator().getNew(), escenario.getTopology().getIPAddressGenerator().obtenerIP(), escenario.getTopology().getEventIDGenerator(), escenario.getTopology());
+//    } catch (Exception e) {
+//        JVentanaError err;
+//        err = new JVentanaError(VentanaPadre, true, dispensadorDeImagenes);
+//        err.mostrarMensaje(e.toString());
+//        err.show();
+//    }
+//    JVentanaLERA vlera = new JVentanaLERA(escenario.getTopology(), panelDisenio, dispensadorDeImagenes, VentanaPadre, true);
+//    vlera.ponerConfiguracion(lera, false);
+//    vlera.show();
+//    if (lera.isWellConfigured()) {
+//        try {
+//            escenario.getTopology().addNode(lera);
+//            panelDisenio.repaint();
+//        } catch (Exception e) {
+//            JVentanaError err;
+//            err = new JVentanaError(VentanaPadre, true, dispensadorDeImagenes);
+//            err.mostrarMensaje(e.toString());
+//            err.show();
+//        };
+//        this.escenario.setModified(true);
+//    } else {
+//        lera = null;
+//    }
 }//GEN-LAST:event_clicEnAniadirLERA
 
 /** Este m�todo se ejecuta cuando se mueve el rat�n dentro del �rea de simulaci�n ,
  * en la pantalla de simulaci�n. Entre otras cosas, cambia el cursor del rat�n al pasar
  * sobre un elemento, permite mostrar men�s emergentes coherentes con el contexto
  * de donde se encuentra el rat�n, etc�tera.
+ * This method is executed when the rapn moves into the area of simulation, on screen 
+ * simulation. Among other things, changes the mouse cursor to pass * on an item, can display pop mens consistent with the context 
+ * of where the mouse, etcetera is.
  * @since 1.0
  * @param evt El evento que hace que se dispare este m�todo.
  */
@@ -1992,6 +1999,8 @@ private void clicEnAniadirReceptor(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
 /** Este m�todo se llama autom�ticamente cuando se hace clic sobre el icono emisor
  * en la ventana de dise�o. A�ade un emisor nuevo en la topology.
+ * This method is called automatically when you click on the transmitter icon 
+ * in the design window. Adds a new issuer in the topology.
  * @since 1.0
  * @param evt El evento que hace que se dispare este m�todo.
  */
@@ -2227,11 +2236,16 @@ private void clicAlPausar(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clic
             this.escenario.setSaved(true);
             this.setTitle(this.escenario.obtenerFichero().getName());
             TOSMSaver almacenador = new TOSMSaver(escenario);
+//            JVentanaBooleana vb = new JVentanaBooleana(this.VentanaPadre, true, this.dispensadorDeImagenes);
+//            vb.mostrarPregunta(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.PreguntaEmpotrarCRC"));
+//            vb.show();
+//            boolean conCRC = vb.obtenerRespuesta();
+//            boolean correcto = almacenador.save(escenario.obtenerFichero(), conCRC);
             JVentanaBooleana vb = new JVentanaBooleana(this.VentanaPadre, true, this.dispensadorDeImagenes);
-            vb.mostrarPregunta(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.PreguntaEmpotrarCRC"));
+            vb.mostrarPregunta("Do you want to save the routing tables ?");
             vb.show();
-            boolean conCRC = vb.obtenerRespuesta();
-            boolean correcto = almacenador.save(escenario.obtenerFichero(), conCRC);
+            boolean saveTables = vb.obtenerRespuesta();
+            boolean correcto = almacenador.save(escenario.obtenerFichero(),false ,saveTables);
             if (correcto) {
                 this.escenario.setModified(false);
                 this.escenario.setSaved(true);
@@ -2281,10 +2295,14 @@ private void clicAlPausar(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clic
             if (respuesta) {
                 TOSMSaver almacenador = new TOSMSaver(escenario);
                 JVentanaBooleana vb2 = new JVentanaBooleana(this.VentanaPadre, true, this.dispensadorDeImagenes);
-                vb2.mostrarPregunta(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.PreguntaEmpotrarCRC"));
-                vb2.show();
-                boolean conCRC = vb2.obtenerRespuesta();
-                boolean correcto = almacenador.save(escenario.obtenerFichero(), conCRC);
+//                vb2.mostrarPregunta(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.PreguntaEmpotrarCRC"));
+//                vb2.show();
+//                boolean conCRC = vb2.obtenerRespuesta();
+//                boolean correcto = almacenador.save(escenario.obtenerFichero(), conCRC);
+                vb.mostrarPregunta("Do you want to save the routing tables ?");
+                vb.show();
+                boolean saveTables = vb.obtenerRespuesta();
+                boolean correcto = almacenador.save(escenario.obtenerFichero(),false ,saveTables);
                 if (correcto) {
                     this.escenario.setModified(false);
                     this.escenario.setSaved(true);
@@ -2307,10 +2325,14 @@ private void clicAlPausar(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clic
         } else {
             TOSMSaver almacenador = new TOSMSaver(escenario);
             JVentanaBooleana vb = new JVentanaBooleana(this.VentanaPadre, true, this.dispensadorDeImagenes);
-            vb.mostrarPregunta(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.PreguntaEmpotrarCRC"));
+//            vb.mostrarPregunta(java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("JVentanaHija.PreguntaEmpotrarCRC"));
+//            vb.show();
+//            boolean conCRC = vb.obtenerRespuesta();
+//            boolean correcto = almacenador.save(escenario.obtenerFichero(), conCRC);
+            vb.mostrarPregunta("Do you want to save the routing tables ?");
             vb.show();
-            boolean conCRC = vb.obtenerRespuesta();
-            boolean correcto = almacenador.save(escenario.obtenerFichero(), conCRC);
+            boolean saveTables = vb.obtenerRespuesta();
+            boolean correcto = almacenador.save(escenario.obtenerFichero(),false ,saveTables);
             if (correcto) {
                 this.escenario.setModified(false);
                 this.escenario.setSaved(true);

@@ -51,6 +51,7 @@ public abstract class TNode extends TTopologyElement implements Comparable, ITim
         estado = DESELECCIONADO;
         mostrarNombre = false;
         IP = d;
+        mask = "255.255.255.255";
         ports = null;
         cerrojo = new TMonitor();
         topology = t;
@@ -58,6 +59,8 @@ public abstract class TNode extends TTopologyElement implements Comparable, ITim
         availableNs = 0;
         nsDelTic = 0;
         pasosSinEmitir = 0;
+        sayCongested=false;
+        LDP=true;
     }
 
     /**
@@ -242,6 +245,20 @@ public abstract class TNode extends TTopologyElement implements Comparable, ITim
     public void setIPAddress(String direccion) {
         IP = direccion;
     }
+    
+    /**
+     * @return the sayCongested
+     */
+    public boolean isSayCongested() {
+        return sayCongested;
+    }
+
+    /**
+     * @param sayCongested the sayCongested to set
+     */
+    public void setSayCongested(boolean sayCongested) {
+        this.sayCongested = sayCongested;
+    }
 
     /**
      * Este m�todo permite establecer el n�mero de ports que tendr� el nodo.
@@ -288,6 +305,41 @@ public abstract class TNode extends TTopologyElement implements Comparable, ITim
     public int getStepsWithoutEmitting() {
         return pasosSinEmitir;
     }
+    
+    /**
+     * @return the LDP
+     */
+    public boolean isLDP() {
+        return LDP;
+    }
+
+    /**
+     * @param LDP the LDP to set
+     */
+    public void setLDP(boolean LDP) {
+        this.LDP = LDP;
+    }
+    
+    /**
+     * @return the mask
+     */
+    public String getMask() {
+        return mask;
+    }
+
+    /**
+     * @param mask the mask to set
+     */
+    public void setMask(String mask) {
+        this.mask = mask;
+    }
+
+    
+    /**
+     * Put this node onto congested mode
+     * @since 1.0
+     */    
+    public abstract void toCongest();
     
     /**
      * Este m�todo permite descartar un paquete en el nodo.
@@ -389,6 +441,21 @@ public abstract class TNode extends TTopologyElement implements Comparable, ITim
      * @since 1.0
      */    
     public abstract boolean unMarshall(String elemento);
+    
+    /**
+     * This method convert a string into a new switching table entry.
+     * @param tableEntry the string to convert.
+     * @return TRUE, if the process is a success. FALSE otherwise.
+     * @since 2.0
+     */    
+    public abstract boolean addTableEntry(String tableEntry);
+    
+    /**
+     * This method convert a string into a new switching table entry.
+     * @return The String of the table content.
+     * @since 2.0
+     */    
+    public abstract String saveTableEntry();
     
     /**
      * Este m�todo permite acceder directamente a las estad�sticas del nodo.
@@ -537,6 +604,10 @@ public abstract class TNode extends TTopologyElement implements Comparable, ITim
      * @since 1.0
      */    
     private boolean generarEstadisticas;
+    /**
+     * @since 1.0
+     */    
+    private boolean sayCongested;
     
     /**
      * Este atributo almacena el n�mero de nanosegundos que tiene un tic de reloj
@@ -546,4 +617,12 @@ public abstract class TNode extends TTopologyElement implements Comparable, ITim
     protected int nsDelTic;
     
     private int pasosSinEmitir = 0;
+    
+    private boolean LDP;
+    
+    private String mask;
+
+    
+    
+
 }

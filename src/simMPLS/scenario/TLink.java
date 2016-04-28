@@ -416,7 +416,7 @@ public abstract class TLink extends TTopologyElement implements Comparable, ITim
      */
     public void carryPacket(TAbstractPDU paquete, int destino) {
         cerrojo.lock();
-        buffer.add(new TLinkBufferEntry(paquete, this.obtenerDelay(), destino));
+        getBuffer().add(new TLinkBufferEntry(paquete, this.obtenerDelay(), destino));
         cerrojo.unLock();
     }
     
@@ -501,6 +501,33 @@ public abstract class TLink extends TTopologyElement implements Comparable, ITim
         if (n.getID() == extremo1.getID())
             return TLink.END_NODE_2;
         return TLink.END_NODE_1;
+    }
+    
+    /**
+     * Este m�todo calcula a qu� extremo del enlace se debe enviar un paquete dado el
+     * nodo quelo env�a.
+     * @param n Nodo que env�a el paquete y que hace la consulta.
+     * @return END_NODE_1 si el paquete debe ir al extremo 1. EXTREMO 2 si debe ir al extremo 2.
+     * @since 1.0
+     */
+    public TNode getTargetNodeOfTrafficSentBy(TNode n) {
+        if (n.getID() == extremo1.getID())
+            return extremo2;
+        return extremo1;
+    }
+    
+    /**
+     * @return the buffer
+     */
+    public SortedSet getBuffer() {
+        return buffer;
+    }
+
+    /**
+     * @param buffer the buffer to set
+     */
+    public void setBuffer(SortedSet buffer) {
+        this.buffer = buffer;
     }
     
     /**
@@ -610,7 +637,7 @@ public abstract class TLink extends TTopologyElement implements Comparable, ITim
      * el mismo.
      * @since 1.0
      */
-    protected SortedSet buffer;
+    private SortedSet buffer;
     
     /**
      * Este atributo almacena temporalmente los paquetes que han llegado al destinio.
@@ -687,4 +714,6 @@ public abstract class TLink extends TTopologyElement implements Comparable, ITim
      * @since 1.0
      */    
     public static final int FALTA_EXTREMO_2 = 7;
+
+    
 }

@@ -15,8 +15,9 @@
  */
 package simMPLS.utils;
 
-/** Esta clase permite crear un objeto que genera direcciones IP consecutivas y sin
- * repetici�n dentro del rango 10.0.0.1 - 10.255.255.254
+/** 
+ * This class lets you create an object that generates consecutive IP addresses without
+ * repetition within the range 10.0.0.1 - 10.255.255.254
  * @version 1.0
  * @author <B>Manuel Dom�nguez Dorado</B><br><A
  * href="mailto:ingeniero@ManoloDominguez.com">ingeniero@ManoloDominguez.com</A><br><A href="http://www.ManoloDominguez.com" target="_blank">http://www.ManoloDominguez.com</A>

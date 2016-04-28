@@ -17,6 +17,7 @@ package simMPLS.scenario;
 
 import simMPLS.protocols.TAbstractPDU;
 import simMPLS.protocols.TMPLSPDU;
+import simMPLS.protocols.TICMPPDU;
 import simMPLS.hardware.timer.TTimerEvent;
 import simMPLS.hardware.timer.ITimerEventListener;
 import simMPLS.hardware.ports.TFIFOPortSet;
@@ -24,8 +25,12 @@ import simMPLS.hardware.ports.TPort;
 import simMPLS.hardware.ports.TPortSet;
 import simMPLS.utils.TLongIDGenerator;
 import java.awt.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jfree.chart.*;
 import org.jfree.data.*;
+import simMPLS.utils.EIDGeneratorOverflow;
+
 
 /**
  * Esta clase implementa un nodo receptor de tr�fico.
@@ -38,7 +43,7 @@ public class TReceiverNode extends TNode implements ITimerEventListener, Runnabl
     /**
      * Crea una nueva instancia de TNodoReceptor
      * @param identificador Identificador unico para el nodo en la topolog�a.
-     * @param d Direcci�n IP del nodo.
+     * @param d IP address of the node.
      * @param il Generador de identificadores para los eventos que tenga que genrar el nodo.
      * @param t Topologia dentro de la cual se encuentra el nodo.
      * @since 1.0
@@ -86,11 +91,33 @@ public class TReceiverNode extends TNode implements ITimerEventListener, Runnabl
      * pone en funcionamiento. En �l se codifica toda la funcionalidad del nodo.
      * @since 1.0
      */    
+    @Override
     public void run() {
         // Acciones a llevar a cabo durante el tic.
+        if (this.getPorts().isArtificiallyCongested()) {
+            try {
+                this.generateSimulationEvent(new TSENodeCongested(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), this.getPorts().getCongestionLevel()));
+            } catch (Exception e) {
+                e.printStackTrace(); 
+            }
+        }
         recibirDatos();
         estadisticas.consolidateData(this.getAvailableTime());
         // Acciones a llevar a cabo durante el tic.
+    }
+    
+    /**
+     * This method will put the node to cengested mode
+     * @since 2.0
+     */ 
+    @Override
+    public void toCongest(){
+        if (this.getPorts().isArtificiallyCongested()) {
+            this.getPorts().setArtificiallyCongested(false);
+        } else {
+            this.getPorts().setArtificiallyCongested(true);
+        }
+        super.setSayCongested(true);
     }
 
     /**
@@ -99,21 +126,14 @@ public class TReceiverNode extends TNode implements ITimerEventListener, Runnabl
      */    
     public void recibirDatos() {
         TPort p = this.ports.getPort(0);
-        long idEvt = 0;
-        int tipo = 0;
         TAbstractPDU paquete = null;
-        TSEPacketReceived evt = null;
         if (p != null) {
             while (p.thereIsAPacketWaiting()) {
                 paquete = p.getPacket();
-                try {
-                    idEvt = this.longIdentifierGenerator.getNextID();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 this.contabilizarPaquete(paquete, true);
-                evt = new TSEPacketReceived(this, idEvt, this.getAvailableTime(), tipo, paquete.getSize());
-                this.simulationEventsListener.captureSimulationEvents(evt);
+                if(paquete.getType() == TAbstractPDU.ICMP){
+                    this.reply((TICMPPDU)paquete);
+                }
                 paquete = null;
             }
         }
@@ -138,6 +158,29 @@ public class TReceiverNode extends TNode implements ITimerEventListener, Runnabl
             } else if (paquete.getSubtype() == TAbstractPDU.IPV4) {
             } else if (paquete.getSubtype() == TAbstractPDU.IPV4_GOS) {
             }
+        }
+    }
+    
+    /**
+     * This method reply to the sender of an icmp request
+     * @param packet Received ICMP packet
+     * @since 2.0
+     */    
+    public void reply(TICMPPDU packet) {
+        try {
+            TICMPPDU replyPacket = new TICMPPDU(this.longIdentifierGenerator.getNextID(),this.getIPAddress(),packet.getIPv4Header().getOriginIPAddress(),0,0);
+            TPort pt = ports.getPort(0);
+            if (pt != null) {
+                if (!pt.isAvailable()) {
+                    this.generateSimulationEvent(new TSEPacketGenerated(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), replyPacket.getType(), replyPacket.getSize()));
+                    this.generateSimulationEvent(new TSEPacketSent(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), replyPacket.getType()));
+                    pt.putPacketOnLink(replyPacket, pt.getLink().getTargetNodeIDOfTrafficSentBy(this));
+                } else {
+                    discardPacket(replyPacket);
+                } 
+            }
+        } catch (EIDGeneratorOverflow ex) {
+            Logger.getLogger(TReceiverNode.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -192,6 +235,8 @@ public class TReceiverNode extends TNode implements ITimerEventListener, Runnabl
         this.setWellConfigured(false);
         if (this.getName().equals(""))
             return this.SIN_NOMBRE;
+        if (this.getIPAddress().isEmpty() && recfg)
+            return this.EMPTY_IP;
         boolean soloEspacios = true;
         for (int i=0; i < this.getName().length(); i++){
             if (this.getName().charAt(i) != ' ')
@@ -228,6 +273,7 @@ public class TReceiverNode extends TNode implements ITimerEventListener, Runnabl
             case SIN_NOMBRE: return (java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("TConfigReceptor.FALTA_NOMBRE"));
             case NOMBRE_YA_EXISTE: return (java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("TConfigReceptor.NOMBRE_REPETIDO"));
             case SOLO_ESPACIOS: return (java.util.ResourceBundle.getBundle("simMPLS/lenguajes/lenguajes").getString("TNodoReceptor.NombreNoSoloEspacios"));
+            case EMPTY_IP: return "IP Address of the node is not present";
         }
         return ("");
     }
@@ -237,15 +283,14 @@ public class TReceiverNode extends TNode implements ITimerEventListener, Runnabl
      * @return La representaci�n textual del nodo.
      * @since 1.0
      */    
+    @Override
     public String marshall() {
-        String cadena = "#Receptor#";
+        String cadena = "#Receiver#";
         cadena += this.getID();
         cadena += "#";
         cadena += this.getName().replace('#', ' ');
         cadena += "#";
         cadena += this.getIPAddress();
-        cadena += "#";
-        cadena += this.getStatus();
         cadena += "#";
         cadena += this.getShowName();
         cadena += "#";
@@ -265,21 +310,32 @@ public class TReceiverNode extends TNode implements ITimerEventListener, Runnabl
      * @return TRUE, si se ha podido deserializar correctamente. FALSE en caso contrario.
      * @since 1.0
      */    
+    @Override
     public boolean unMarshall(String elemento) {
         String valores[] = elemento.split("#");
-        if (valores.length != 10) {
+        if (valores.length != 9) {
             return false;
         }
-        this.setID(Integer.valueOf(valores[2]).intValue());
+        this.setID(Integer.parseInt(valores[2]));
         this.setName(valores[3]);
         this.setIPAddress(valores[4]);
-        this.setStatus(Integer.valueOf(valores[5]).intValue());
-        this.setShowName(Boolean.valueOf(valores[6]).booleanValue());
-        this.setGenerateStats(Boolean.valueOf(valores[7]).booleanValue());
-        int posX = Integer.valueOf(valores[8]).intValue();
-        int posY = Integer.valueOf(valores[9]).intValue();
+        this.setStatus(0);
+        this.setShowName(Boolean.parseBoolean(valores[5]));
+        this.setGenerateStats(Boolean.parseBoolean(valores[6]));
+        int posX = Integer.parseInt(valores[7]);
+        int posY = Integer.parseInt(valores[8]);
         this.setPosition(new Point(posX+24, posY+24));
         return true;
+    }
+    
+    @Override
+    public boolean addTableEntry(String tableEntry) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public String saveTableEntry() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /**
@@ -342,6 +398,11 @@ public class TReceiverNode extends TNode implements ITimerEventListener, Runnabl
      * @since 1.0
      */    
     public static final int SOLO_ESPACIOS = 3;
+    /**
+     * IP Address is empty
+     * @since 1.0
+     */    
+    public static final int EMPTY_IP = 4;
     
     private TReceiverStats estadisticas;
 }

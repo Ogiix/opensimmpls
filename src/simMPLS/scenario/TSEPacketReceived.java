@@ -16,6 +16,9 @@
 package simMPLS.scenario;
 
 import simMPLS.protocols.TAbstractPDU;
+import simMPLS.protocols.TICMPPDU;
+import simMPLS.protocols.TMPLSLabelStack;
+import simMPLS.protocols.TMPLSPDU;
 
 /**
  * Esta clase implementa un evento que ser� usado para notificar que un nodo ha
@@ -30,15 +33,15 @@ public class TSEPacketReceived extends TSimulationEvent {
      * Crea una nueva instancia de TESpaqueteRecibido
      * @since 1.0
      * @param inst Instante de tiempo en el que se produce el evento.
-     * @param tam Tama�o del paquete  al que se refiere el evento.
+     * @param packet Packet received by the node
      * @param emisor Elemento de la topologia que gener� el evento.
      * @param id id �nico del evento.
      * @param tipoPaquete Tipo del paquete que se ha recibido.
      */
-    public TSEPacketReceived(Object emisor, long id, long inst, int tipoPaquete, int tam) {
+    public TSEPacketReceived(Object emisor, long id, long inst, int tipoPaquete, TAbstractPDU packet) {
         super(emisor, id, inst);
         tipoP = tipoPaquete;
-        tamanio = tam;
+        packetReceived = packet;
     }
 
     /**
@@ -88,9 +91,9 @@ public class TSEPacketReceived extends TSimulationEvent {
         TTopologyElement et = null;
         et = super.obtenerFuente();
         if (et.getElementType() == TTopologyElement.LINK) {
-            return ("Enlace ");
+            return ("Link ");
         } else if (et.getElementType() == TTopologyElement.NODO) {
-            return ("Nodo ");
+            return ("Node ");
         }
         return ("");
     }
@@ -128,6 +131,10 @@ public class TSEPacketReceived extends TSimulationEvent {
                 strTipo = "GPSRP";
                 break;
             }
+            case TAbstractPDU.ICMP: {
+                strTipo = "ICMP";
+                break;
+            }
         }
         return(strTipo);
     }
@@ -145,14 +152,44 @@ public class TSEPacketReceived extends TSimulationEvent {
         cad += " ";
         cad += this.obtenerNombre();
         cad += "] ";
-        cad += "ha recibido un paquete ";
+        cad += "has received a packet ";
         cad += this.obtenerNombreTipoPaquete();
-        cad += " de tamanio ";
-        cad += this.tamanio;
-        cad += " octetos.";
+        cad += " of ";
+        cad += this.packetReceived.getSize();
+        cad += " bytes from ";
+        cad += this.packetReceived.getIPv4Header().getOriginIPAddress();
+        if(packetReceived.getType()==TAbstractPDU.MPLS){
+            TMPLSPDU mplsPacket = (TMPLSPDU) packetReceived;
+            cad += " TTL is ";
+            cad += mplsPacket.getLabelStack().getTop().getTTL();
+        }
+        if(packetReceived.getType()==TAbstractPDU.IPV4){
+            cad += " TTL is ";
+            cad += this.packetReceived.getIPv4Header().getTTL();
+        }
+        if(packetReceived.getType()==TAbstractPDU.ICMP){
+            cad += " TTL is ";
+            cad += this.packetReceived.getIPv4Header().getTTL();
+            TICMPPDU icmpPacket = (TICMPPDU) packetReceived;
+            cad += ".\r\nICMP infos are : type ";
+            cad += icmpPacket.getTypeICMP();
+            cad += " , code ";
+            cad += icmpPacket.getCodeICMP();
+            if(icmpPacket.getPayloadICMP() != null){
+                TMPLSLabelStack stackToDump = icmpPacket.getPayloadICMP();
+                for(int j = stackToDump.getSize()-1; j>=0; j--){
+                    cad += " MPLS label=";
+                    cad += stackToDump.getLabelFromID(j).getLabel();
+                    cad += " Exp=";
+                    cad += stackToDump.getLabelFromID(j).getEXP();
+                    cad += " TTL=";
+                    cad += stackToDump.getLabelFromID(j).getTTL();
+                }
+            }
+        }
         return(cad);
     }
 
     private int tipoP;
-    private int tamanio;
+    private TAbstractPDU packetReceived;
 }

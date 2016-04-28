@@ -101,7 +101,7 @@ public class TSimulation {
      * @since 1.0
      */    
     public String marshallTimeParameters() {
-        String serializada = "#Temporizacion#";
+        String serializada = "#Timing#";
         serializada += this.duracion+"#";
         serializada += this.paso+"#";
         return serializada;

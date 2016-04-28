@@ -90,7 +90,7 @@ public class JSimulationPanel extends javax.swing.JPanel {
         COLOR_FONDO_DOMINIO = new Color(239, 222, 209);
         COLOR_LSP = new Color(0, 0, 200);
         cerrojo = new TMonitor();
-        ficheroTraza = null;;
+        ficheroTraza = null;
         streamFicheroTraza = null;
         streamTraza = null;
     }
@@ -130,8 +130,25 @@ public class JSimulationPanel extends javax.swing.JPanel {
         texto += this.ticActual + ": ";
         if (this.streamTraza != null) {
             if (es.getType() == TOpenSimMPLSEvent.SIMULACION) {
+                if(es.getSubtype()==TSimulationEvent.NODE_CONGESTED){
+                    TSENodeCongested enc = (TSENodeCongested) es;
+                    TNode nt = (TNode) enc.obtenerFuente();
+                    if(nt.isSayCongested()){
+                        texto += es.toString();
+                        this.streamTraza.println(texto);
+                        nt.setSayCongested(false);
+                    }
+                }else if(es.getSubtype() == TSimulationEvent.PACKET_ON_FLY || es.getSubtype() == TSimulationEvent.PACKET_DISCARDED || es.getSubtype() == TSimulationEvent.PACKET_SENT){
+                    
+                }else if(es.getSubtype() == TSimulationEvent.PACKET_ROUTED || es.getSubtype() == TSimulationEvent.PACKET_SWITCHED){
+                    
+                }else if(es.getSubtype() == TSimulationEvent.PACKET_RECEIVED){
+                    texto += es.toString();
+                    this.streamTraza.println(texto); 
+                }else{
                 texto += es.toString();
                 this.streamTraza.println(texto);
+                }
             }
         }
     }
@@ -505,6 +522,10 @@ public class JSimulationPanel extends javax.swing.JPanel {
                             g2D.drawImage(this.dispensadorDeImagenes.obtenerImagen(TImagesBroker.PDU_MPLS), p.x-8, p.y-8, null);
                         } else if (ept.obtenerTipoPaquete() == TAbstractPDU.MPLS_GOS) {
                             g2D.drawImage(this.dispensadorDeImagenes.obtenerImagen(TImagesBroker.PDU_MPLS_GOS), p.x-8, p.y-8, null);
+                        } else if (ept.obtenerTipoPaquete() == TAbstractPDU.ICMP) {
+                            g2D.drawImage(this.dispensadorDeImagenes.obtenerImagen(TImagesBroker.PDU_ICMP), p.x-8, p.y-8, null);
+                        } else if (ept.obtenerTipoPaquete() == TAbstractPDU.ICMPTOREROUTE) {
+                            g2D.drawImage(this.dispensadorDeImagenes.obtenerImagen(TImagesBroker.PDU_ICMP), p.x-8, p.y-8, null);
                         }
                     } else if (evento.getSubtype() == TSimulationEvent.PACKET_DISCARDED) {
                         TSEPacketDiscarded epd = (TSEPacketDiscarded) evento;

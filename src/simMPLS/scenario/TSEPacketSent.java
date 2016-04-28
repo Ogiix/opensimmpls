@@ -86,9 +86,9 @@ public class TSEPacketSent extends TSimulationEvent {
         TTopologyElement et = null;
         et = super.obtenerFuente();
         if (et.getElementType() == TTopologyElement.LINK) {
-            return ("Enlace ");
+            return ("Link ");
         } else if (et.getElementType() == TTopologyElement.NODO) {
-            return ("Nodo ");
+            return ("Node ");
         }
         return ("");
     }
@@ -126,6 +126,10 @@ public class TSEPacketSent extends TSimulationEvent {
                 strTipo = "GPSRP";
                 break;
             }
+            case TAbstractPDU.ICMP: {
+                strTipo = "ICMP";
+                break;
+            }
         }
         return(strTipo);
     }
@@ -143,7 +147,7 @@ public class TSEPacketSent extends TSimulationEvent {
         cad += " ";
         cad += this.obtenerNombre();
         cad += "] ";
-        cad += "ha enviado un paquete ";
+        cad += "has sent a packet ";
         cad += this.obtenerNombreTipoPaquete();
         return(cad);
     }

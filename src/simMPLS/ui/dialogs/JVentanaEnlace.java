@@ -16,9 +16,7 @@
 package simMPLS.ui.dialogs;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
-import javax.swing.*;
 import simMPLS.scenario.TLinkConfig;
 import simMPLS.scenario.TTopology;
 import simMPLS.scenario.TNode;
@@ -299,9 +297,17 @@ private void clicEnCambioNodoDerecho(java.awt.event.ActionEvent evt) {//GEN-FIRS
         if (seleccionado != null) {
 //          Actualizar los ports de dicho nodo
             int i=0;
-            for (i=0; i<seleccionado.getPorts().getNumberOfPorts(); i++) {
+            if(seleccionado.getNodeType()==TNode.LER){
+                for (i=1; i<seleccionado.getPorts().getNumberOfPorts(); i++) {
                 if (seleccionado.getPorts().getPort(i).isAvailable())
                     this.selectorPuertoDerecho.addItem(""+i);
+                }
+            }
+            else{
+                for (i=0; i<seleccionado.getPorts().getNumberOfPorts(); i++) {
+                    if (seleccionado.getPorts().getPort(i).isAvailable())
+                        this.selectorPuertoDerecho.addItem(""+i);
+                }
             }
 //          Actualizar los ports de dicho nodo
         }
@@ -325,9 +331,17 @@ private void clicEnCambioNodoIzquierdo(java.awt.event.ActionEvent evt) {//GEN-FI
         if (seleccionado != null) {
 //          Actualizar los ports de dicho nodo
             int i=0;
-            for (i=0; i<seleccionado.getPorts().getNumberOfPorts(); i++) {
+            if(seleccionado.getNodeType()==TNode.LER){
+                for (i=1; i<seleccionado.getPorts().getNumberOfPorts(); i++) {
                 if (seleccionado.getPorts().getPort(i).isAvailable())
                     this.selectorPuertoIzquierdo.addItem(""+i);
+                }
+            }
+            else{
+                for (i=0; i<seleccionado.getPorts().getNumberOfPorts(); i++) {
+                    if (seleccionado.getPorts().getPort(i).isAvailable())
+                        this.selectorPuertoIzquierdo.addItem(""+i);
+                }
             }
 //          Actualizar los ports de dicho nodo
             while (it.hasNext()) {

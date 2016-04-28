@@ -35,6 +35,7 @@ public class TTLDPPayload {
     public TTLDPPayload() {
         this.TLDPMessageType = TTLDPPayload.LABEL_REQUEST;
         this.targetIPAddress = "";
+        this.targetMask = "";
         // FIX: create and use constants instead of these harcoded values
         this.label = 16;
         this.TLDPIdentifier = 0;
@@ -101,8 +102,28 @@ public class TTLDPPayload {
      * @return The IP address of the node that should receive this TLDP packet.
      * @since 1.0
      */
-    public String getTailEndIPAddress() {
+    public String getTargetIPAddress() {
         return this.targetIPAddress;
+    }
+    
+    /**
+     * This method sets the Mask of the subnet of this LDP.
+     * @param targetMask the IP address of the node that should receive
+     * this TLDP packet.
+     * @since 2.0
+     */
+    public void setTargetMask(String targetMask) {
+        this.targetMask = targetMask;
+    }
+
+    /**
+     * This method gets the Mask of the subnet of this LDP.
+     *
+     * @return The IP address of the node that should receive this TLDP packet.
+     * @since 2.0
+     */
+    public String getTargetMask() {
+        return this.targetMask;
     }
 
     /**
@@ -155,7 +176,7 @@ public class TTLDPPayload {
     public int getTLDPIdentifier() {
         return this.TLDPIdentifier;
     }
-
+    
     public static final int LABEL_REQUEST = -33;
     public static final int LABEL_REQUEST_DENIED = -31;
     public static final int LABEL_REQUEST_OK = -30;
@@ -164,6 +185,8 @@ public class TTLDPPayload {
 
     private int TLDPMessageType;
     private String targetIPAddress;
+    private String targetMask;
     private int label;
     private int TLDPIdentifier;
+    
 }

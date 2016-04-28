@@ -71,8 +71,6 @@ public class TSwitchingMatrix {
      * matrix using the values specified as arguments to do that.
      *
      * @author Manuel Domínguez Dorado - ingeniero@ManoloDominguez.com
-     * @param incomingPortID The incoming port of field of the wanted switching
-     * entry.
      * @param labelOrFEC The labelOrFEC field of the wanted switching entry.
      * @param entryType The entry type (ILM or FTN) field of the wanted
      * switching entry.
@@ -80,15 +78,20 @@ public class TSwitchingMatrix {
      * arguments (if exist) or NULL on the contrary.
      * @since 1.0
      */
-    public TSwitchingMatrixEntry getEntry(int incomingPortID, int labelOrFEC, int entryType) {
+    public TSwitchingMatrixEntry getEntry(int labelOrFEC, int entryType) {
         this.monitor.lock();
         Iterator iterator = this.switchingMatrix.iterator();
         TSwitchingMatrixEntry switchingMatrixEntryAux;
         while (iterator.hasNext()) {
             switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
-            if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
-                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
-                    if (switchingMatrixEntryAux.getEntryType() == entryType) {
+            if (switchingMatrixEntryAux.getEntryType() == entryType) {
+                if(entryType == TSwitchingMatrixEntry.FEC_ENTRY ){
+                    if ((labelOrFEC & switchingMatrixEntryAux.getMask()) == switchingMatrixEntryAux.getLabelOrFEC()){
+                        this.monitor.unLock();
+                        return switchingMatrixEntryAux;
+                    }
+                } else if(entryType == TSwitchingMatrixEntry.LABEL_ENTRY){
+                    if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
                         this.monitor.unLock();
                         return switchingMatrixEntryAux;
                     }
@@ -132,23 +135,19 @@ public class TSwitchingMatrix {
      * @author Manuel Domínguez Dorado - ingeniero@ManoloDominguez.com
      * @param upstreamTLDPSessionID Upstream TLDP session ID field of the wanted
      * switching entry.
-     * @param incomingPortID The incoming port of field of the wanted switching
-     * entry.
      * @return The switching entry corresponding to the values specified as
      * arguments (if exist) or NULL on the contrary.
      * @since 1.0
      */
-    public TSwitchingMatrixEntry getEntry(int upstreamTLDPSessionID, int incomingPortID) {
+    public TSwitchingMatrixEntry getEntryUpStreamTLDP(int upstreamTLDPSessionID) {
         this.monitor.lock();
         Iterator iterator = this.switchingMatrix.iterator();
         TSwitchingMatrixEntry switchingMatrixEntryAux;
         while (iterator.hasNext()) {
             switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
             if (switchingMatrixEntryAux.getUpstreamTLDPSessionID() == upstreamTLDPSessionID) {
-                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
-                    this.monitor.unLock();
-                    return switchingMatrixEntryAux;
-                }
+                this.monitor.unLock();
+                return switchingMatrixEntryAux;
             }
         }
         this.monitor.unLock();
@@ -160,8 +159,6 @@ public class TSwitchingMatrix {
      * values passed as arguments) exist in the switching matrix or not.
      *
      * @author Manuel Domínguez Dorado - ingeniero@ManoloDominguez.com
-     * @param incomingPortID The incoming port of field of the wanted switching
-     * entry.
      * @param labelOrFEC The labelOrFEC field of the wanted switching entry.
      * @param entryType The entry type (ILM or FTN) field of the wanted
      * switching entry.
@@ -169,18 +166,16 @@ public class TSwitchingMatrix {
      * matrix. Otherwise, returns FALSE.
      * @since 1.0
      */
-    public boolean existsEntry(int incomingPortID, int labelOrFEC, int entryType) {
+    public boolean existsEntry(int labelOrFEC, int entryType) {
         this.monitor.lock();
         Iterator iterator = this.switchingMatrix.iterator();
         TSwitchingMatrixEntry switchingMatrixEntryAux;
         while (iterator.hasNext()) {
             switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
-            if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
-                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
-                    if (switchingMatrixEntryAux.getEntryType() == entryType) {
-                        this.monitor.unLock();
-                        return true;
-                    }
+            if (switchingMatrixEntryAux.getEntryType() == entryType) {
+                if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
+                    this.monitor.unLock();
+                    return true;
                 }
             }
         }
@@ -193,25 +188,21 @@ public class TSwitchingMatrix {
      * using the value specified as an argument to do that.
      *
      * @author Manuel Domínguez Dorado - ingeniero@ManoloDominguez.com
-     * @param incomingPortID The incoming port of field of the switching entry
-     * to be removed.
      * @param labelOrFEC The labelOrFEC field of the switching entry to be
      * removed.
      * @param entryType The entry type (ILM or FTN) field of the switching entry
      * to be removed.
      * @since 1.0
      */
-    public void removeEntry(int incomingPortID, int labelOrFEC, int entryType) {
+    public void removeEntry(int labelOrFEC, int entryType) {
         this.monitor.lock();
         Iterator iterator = this.switchingMatrix.iterator();
         TSwitchingMatrixEntry switchingMatrixEntryAux;
         while (iterator.hasNext()) {
             switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
-            if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
-                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
-                    if (switchingMatrixEntryAux.getEntryType() == entryType) {
-                        iterator.remove();
-                    }
+            if (switchingMatrixEntryAux.getEntryType() == entryType) {
+                if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
+                    iterator.remove();
                 }
             }
         }
@@ -225,20 +216,16 @@ public class TSwitchingMatrix {
      * @author Manuel Domínguez Dorado - ingeniero@ManoloDominguez.com
      * @param localTLDPSessionID Local TLDP session ID field of the switching
      * entry to be removed.
-     * @param incomingPortID The incoming port of field of the switching entry
-     * to be removed.
      * @since 1.0
      */
-    public void removeEntry(int localTLDPSessionID, int incomingPortID) {
+    public void removeEntry(int localTLDPSessionID) {
         this.monitor.lock();
         Iterator iterator = this.switchingMatrix.iterator();
         TSwitchingMatrixEntry switchingMatrixEntryAux;
         while (iterator.hasNext()) {
             switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
             if (switchingMatrixEntryAux.getLocalTLDPSessionID() == localTLDPSessionID) {
-                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
-                    iterator.remove();
-                }
+                iterator.remove();
             }
         }
         this.monitor.unLock();
@@ -263,24 +250,24 @@ public class TSwitchingMatrix {
      * TSwitchingMatrixEntry.SWAP_LABEL and TSwitchingMatrixEntry.NOOP).
      * @since 1.0
      */
-    public int getLabelStackOperation(int incomingPortID, int labelOrFEC, int entryType) {
-        this.monitor.lock();
-        Iterator iterator = this.switchingMatrix.iterator();
-        TSwitchingMatrixEntry switchingMatrixEntryAux;
-        while (iterator.hasNext()) {
-            switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
-            if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
-                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
-                    if (switchingMatrixEntryAux.getEntryType() == entryType) {
-                        this.monitor.unLock();
-                        return switchingMatrixEntryAux.getLabelStackOperation();
-                    }
-                }
-            }
-        }
-        this.monitor.unLock();
-        return TSwitchingMatrixEntry.UNDEFINED;
-    }
+//    public int getLabelStackOperation(int incomingPortID, int labelOrFEC, int entryType) {
+//        this.monitor.lock();
+//        Iterator iterator = this.switchingMatrix.iterator();
+//        TSwitchingMatrixEntry switchingMatrixEntryAux;
+//        while (iterator.hasNext()) {
+//            switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
+//            if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
+//                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
+//                    if (switchingMatrixEntryAux.getEntryType() == entryType) {
+//                        this.monitor.unLock();
+//                        return switchingMatrixEntryAux.getLabelStackOperation();
+//                    }
+//                }
+//            }
+//        }
+//        this.monitor.unLock();
+//        return TSwitchingMatrixEntry.UNDEFINED;
+//    }
 
     /**
      * This method gets the outgoing label that has to be used when forwarding a
@@ -299,24 +286,24 @@ public class TSwitchingMatrix {
      * arguments.
      * @since 1.0
      */
-    public int getOutgoingLabel(int incomingPortID, int labelOrFEC, int entryType) {
-        this.monitor.lock();
-        Iterator iterator = this.switchingMatrix.iterator();
-        TSwitchingMatrixEntry switchingMatrixEntryAux;
-        while (iterator.hasNext()) {
-            switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
-            if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
-                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
-                    if (switchingMatrixEntryAux.getEntryType() == entryType) {
-                        this.monitor.unLock();
-                        return switchingMatrixEntryAux.getOutgoingLabel();
-                    }
-                }
-            }
-        }
-        this.monitor.unLock();
-        return TSwitchingMatrixEntry.UNDEFINED;
-    }
+//    public int getOutgoingLabel(int incomingPortID, int labelOrFEC, int entryType) {
+//        this.monitor.lock();
+//        Iterator iterator = this.switchingMatrix.iterator();
+//        TSwitchingMatrixEntry switchingMatrixEntryAux;
+//        while (iterator.hasNext()) {
+//            switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
+//            if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
+//                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
+//                    if (switchingMatrixEntryAux.getEntryType() == entryType) {
+//                        this.monitor.unLock();
+//                        return switchingMatrixEntryAux.getOutgoingLabel();
+//                    }
+//                }
+//            }
+//        }
+//        this.monitor.unLock();
+//        return TSwitchingMatrixEntry.UNDEFINED;
+//    }
 
     /**
      * This method gets the outgoing port that has to be used when forwarding a
@@ -335,24 +322,24 @@ public class TSwitchingMatrix {
      * arguments.
      * @since 1.0
      */
-    public int getOutgoingPortID(int incomingPortID, int labelOrFEC, int entryType) {
-        this.monitor.lock();
-        Iterator iterator = this.switchingMatrix.iterator();
-        TSwitchingMatrixEntry switchingMatrixEntryAux = null;
-        while (iterator.hasNext()) {
-            switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
-            if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
-                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
-                    if (switchingMatrixEntryAux.getEntryType() == entryType) {
-                        this.monitor.unLock();
-                        return switchingMatrixEntryAux.getOutgoingPortID();
-                    }
-                }
-            }
-        }
-        this.monitor.unLock();
-        return TSwitchingMatrixEntry.UNDEFINED;
-    }
+//    public int getOutgoingPortID(int incomingPortID, int labelOrFEC, int entryType) {
+//        this.monitor.lock();
+//        Iterator iterator = this.switchingMatrix.iterator();
+//        TSwitchingMatrixEntry switchingMatrixEntryAux = null;
+//        while (iterator.hasNext()) {
+//            switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
+//            if (switchingMatrixEntryAux.getLabelOrFEC() == labelOrFEC) {
+//                if (switchingMatrixEntryAux.getIncomingPortID() == incomingPortID) {
+//                    if (switchingMatrixEntryAux.getEntryType() == entryType) {
+//                        this.monitor.unLock();
+//                        return switchingMatrixEntryAux.getOutgoingPortID();
+//                    }
+//                }
+//            }
+//        }
+//        this.monitor.unLock();
+//        return TSwitchingMatrixEntry.UNDEFINED;
+//    }
 
     /**
      * This method check wheter a given label is already used by any switching
@@ -370,11 +357,13 @@ public class TSwitchingMatrix {
         TSwitchingMatrixEntry switchingMatrixEntryAux;
         while (iterator.hasNext()) {
             switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
-            if (switchingMatrixEntryAux.getLabelOrFEC() == label) {
-                if (switchingMatrixEntryAux.getEntryType() == TSwitchingMatrixEntry.LABEL_ENTRY) {
-                    this.monitor.unLock();
-                    return true;
-                }
+            if(switchingMatrixEntryAux.getOutgoingLabel() >= label){
+                this.monitor.unLock();
+                return true;
+            }
+            else if (switchingMatrixEntryAux.getEntryType() == TSwitchingMatrixEntry.LABEL_ENTRY && switchingMatrixEntryAux.getLabelOrFEC() >= label) {
+                this.monitor.unLock();
+                return true;
             }
         }
         this.monitor.unLock();
@@ -427,6 +416,27 @@ public class TSwitchingMatrix {
      */
     public int getNumberOfEntries() {
         return this.switchingMatrix.size();
+    }
+    
+    /**
+     * This method returns the content of this matrix in string form.
+     *
+     * @author Gaetan Bulpa
+     * @return The saving of this matrix
+     * @since 2.0
+     */
+    public String save() {
+        String table = "";
+        this.monitor.lock();
+        Iterator iterator = this.switchingMatrix.iterator();
+        TSwitchingMatrixEntry switchingMatrixEntryAux;
+        while (iterator.hasNext()) {
+            switchingMatrixEntryAux = (TSwitchingMatrixEntry) iterator.next();
+            table += switchingMatrixEntryAux.save();
+            table += "\n";
+        }
+        this.monitor.unLock();
+        return table;
     }
 
     /**

@@ -317,11 +317,17 @@ public class JSimulador extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /** Open the help screen.
+     * @since 1.0
+     */
     private void clicEnTutorial(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clicEnTutorial
         JVentanaAyuda va = new JVentanaAyuda(this, true, this.dispensadorDeImagenes);
         va.show();
     }//GEN-LAST:event_clicEnTutorial
 
+    /** Open the open project screen.
+     * @since 1.0
+     */
     private void clicEnAbrir(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clicEnAbrir
         boolean finAbrir = false;
         JFileChooser dialogoAbrir = new JFileChooser();
@@ -381,6 +387,9 @@ public class JSimulador extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_clicEnAbrir
 
+    /** Open the save under screen.
+     * @since 1.0
+     */
     private void clicEnGuardarComo(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clicEnGuardarComo
         JVentanaHija vActiva= (JVentanaHija) Escritorio.getSelectedFrame();
         if (vActiva != null) {
@@ -388,6 +397,9 @@ public class JSimulador extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_clicEnGuardarComo
 
+    /** Open the save screen.
+     * @since 1.0
+     */
     private void clicEnGuardar(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clicEnGuardar
         JVentanaHija vActiva= (JVentanaHija) Escritorio.getSelectedFrame();
         if (vActiva != null) {
@@ -395,7 +407,7 @@ public class JSimulador extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_clicEnGuardar
 
-    /**
+    /** Open the commentary screen.
      * @param evt
      * @since 1.0
      */    
@@ -404,11 +416,7 @@ private void clicEnEnviarComentario(java.awt.event.ActionEvent evt) {//GEN-FIRST
     vc.show();
 }//GEN-LAST:event_clicEnEnviarComentario
 
-/**
- * @param evt
- * @since 1.0
- */
-/**
+/** Open the horizontal view.
  * @param evt
  * @since 1.0
  */
@@ -436,7 +444,7 @@ private void clicEnVistaMosaicoHorizontal(java.awt.event.ActionEvent evt) {//GEN
     }
 }//GEN-LAST:event_clicEnVistaMosaicoHorizontal
 
-/**
+/** Open the horizontal view.
  * @param evt
  * @since 1.0
  */
@@ -464,7 +472,7 @@ private void clicEnVistaMosaicoVertical(java.awt.event.ActionEvent evt) {//GEN-F
     }
 }//GEN-LAST:event_clicEnVistaMosaicoVertical
 
-/**
+/** Waterfall view.
  * @param evt
  * @since 1.0
  */
@@ -501,7 +509,7 @@ private void clicEnVistaCascada(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
     }
 }//GEN-LAST:event_clicEnVistaCascada
 
-/**
+/** View icons.
  * @param evt
  * @since 1.0
  */
@@ -520,7 +528,7 @@ private void clicEnVistaIconos(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
     }
 }//GEN-LAST:event_clicEnVistaIconos
     
-/**
+/** Close button.
  * @param evt
  * @since 1.0
  */
@@ -551,7 +559,7 @@ private void clicEnVistaIconos(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
         }
     }//GEN-LAST:event_clicEnCerrar
     
-    /**
+    /** New button.
      * @param evt
      * @since 1.0
      */    

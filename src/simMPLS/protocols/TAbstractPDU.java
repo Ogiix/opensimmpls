@@ -153,6 +153,8 @@ public abstract class TAbstractPDU implements Comparable {
     public static final int IPV4_GOS = 4;
     public static final int MPLS_GOS = 5;
     public static final int RLPRP = 6;
+    public static final int ICMP = 7;
+    public static final int ICMPTOREROUTE = 8;
 
     // Packet's requirements of Guarantee of Service (GoS).
     public static final int EXP_LEVEL0_WITHOUT_BACKUP_LSP = 0;
