@@ -4,9 +4,34 @@
 
 # THE PROJECT
 
-<b>OpenSimMPLS</b> is an MPLS network simulator, multiplatform and mutilanguage. It is easy-to-use and is intended for teaching activities. It can be used as well to test new protocols, techniques and methods related to MPLS and/or GoS. OpenSimMPLS is a mature project used in universities and companies in more tan 130 different countries to teach, research and design MPLS networks. It was first developed in 2004 as part of a research project at the University of Extremadura. It was hosted since then in SourceForge.net as a CVS project and since 2014 it was updated as a GIT repository and hosted in GitHub forge.
-
 ![OpenSimMPLS logo](https://github.com/manolodd/opensimmpls/blob/master/src/imagenes/splash.png?raw=true)
+
+<b>OpenSimMPLS</b> is an MPLS network simulator, multiplatform and mutilanguage. It is easy-to-use and is intended for teaching activities. It can be used as well to test new protocols, techniques and methods related to MPLS. OpenSimMPLS is a mature project used in universities and companies in more tan 130 different countries to teach, research and design MPLS networks. It was first developed in 2004 as part of a research project at the University of Extremadura. It was hosted since then in SourceForge.net as a CVS project and since 2014 it was updated as a GIT repository and hosted in GitHub forge.
+
+<b>This is a forked version from Manuel Domínguez-Dorado's original OpenSimMPLS.</b>
+
+The modifications include:
+- Custom IP address assignation
+- Custom Traffic destination
+- ICMP
+- Ping
+- Traceroute
+- TTL-propagate
+- RFC 4950
+- Penultimate hop popping
+- Custom routing tables
+- Manual MPLS entry
+- LDP
+- A packet dumper into the software
+- New format for the saving files with the possibility to save routing tables
+ 
+The following functions are no more available :
+- Guarantee of Service
+- Active nodes
+- Broken links
+- Old save files
+
+Some of these features will be added to the main project in the future.
 
 # LICENSE
  
@@ -20,6 +45,7 @@
 ## Main author:
     
  - Manuel Domínguez-Dorado - <ingeniero@ManoloDominguez.com>
+ - Gaëtan Bulpa - <gaetan.bulpa@gmail.com>
    
 ## Other collaborators (release 1.0):
 
