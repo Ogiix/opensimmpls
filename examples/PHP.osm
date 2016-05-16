@@ -14,9 +14,9 @@
 
 @?Scenario
 
-#Title#Traceroute#
+#Title#Basic MPLS Tunnel #
 #Author#Gaetan Bulpa#
-#Description#Perform a traceroute through a MPLS tunnel#
+#Description#Basic MPLS Tunnel with Penultimate hop popping#
 #Timing#9717791#635#
 
 @!Scenario
@@ -33,19 +33,15 @@
 
 @?Topology
 
-#Receiver#1#END#10.13.13.12#true#false#747#193#
-#LER#2#OUT#10.13.23.15#true#false#593#191#5120#512#true#true#
-#LSR#3#MID#10.11.15.16#true#false#341#196#5120#512#true#true#
-#LER#4#IN#10.11.27.17#true#false#248#197#5120#512#true#true#
-#Sender#5#START#10.11.17.18#true#false#155#196#10.13.13.12#false#0#false#7#0#0#255#true#8#true#
-#LSR#10#M2#10.12.14.19#true#false#416#196#5120#512#true#true#
-#LSR#11#M3#10.13.18.20#true#false#506#194#5120#512#true#true#
+#Receiver#1#END#10.11.13.12#true#false#766#197#
+#LER#2#OUT#10.11.14.15#true#false#601#198#5120#512#true#true#
+#LSR#3#MID#10.11.15.16#true#false#455#198#5120#512#true#true#
+#LER#4#IN#10.11.16.17#true#false#291#198#5120#512#true#true#
+#Sender#5#START#10.11.17.18#true#false#155#196#10.11.13.12#false#0#false#7#0#0#255#false#8#false#
 #ExternalLink#6#L1#false#125000#START#0#IN#1#
 #InternalLink#7#L2#false#125000#IN#2#MID#1#
+#InternalLink#8#L3#false#125000#MID#2#OUT#2#
 #ExternalLink#9#L4#false#125000#END#0#OUT#1#
-#InternalLink#12#10#false#125000#MID#2#M2#1#
-#InternalLink#13#L12#false#125000#M2#2#M3#1#
-#InternalLink#14#L14#false#125000#M3#2#OUT#2#
 
 @!Topology
 
@@ -56,39 +52,4 @@
 // #POP#Label IN#Output port#
 // #ROUTE#Destination Subnet#Mask#Next Hop IP#
 // ***********************************************
-
-@?Tables@OUT
-#ROUTE#10.13.13.0#255.255.255.0#10.13.13.12#
-#PUSH#10.11.17.0#255.255.255.0#10.13.18.20#21#
-@!Tables
-
-@?Tables@MID
-#POP#17#1#
-#SWAP#22#20#2#
-#ROUTE#10.11.17.0#255.255.255.0#10.11.27.17#
-#ROUTE#10.12.0.0#255.255.0.0#10.12.14.19#
-#ROUTE#10.13.0.0#255.255.0.0#10.12.14.19#
-@!Tables
-
-@?Tables@IN
-#ROUTE#10.11.17.0#255.255.255.0#10.11.17.18#
-#PUSH#10.13.13.0#255.255.255.0#10.11.15.16#22#
-#ROUTE#10.11.15.0#255.255.255.0#10.11.15.16#
-#ROUTE#10.12.0.0#255.255.0.0#10.11.15.16#
-#ROUTE#10.13.0.0#255.255.0.0#10.11.15.16#
-@!Tables
-
-@?Tables@M2
-#SWAP#19#17#1#
-#SWAP#20#18#2#
-#ROUTE#10.11.0.0#255.255.0.0#10.11.15.16#
-#ROUTE#10.13.0.0#255.255.0.0#10.13.18.20#
-@!Tables
-
-@?Tables@M3
-#POP#18#2#
-#SWAP#21#19#1#
-#ROUTE#10.11.0.0#255.255.0.0#10.12.14.19#
-#ROUTE#10.13.0.0#255.255.0.0#10.13.23.15#
-@!Tables
 

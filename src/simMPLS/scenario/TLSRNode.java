@@ -584,6 +584,15 @@ public class TLSRNode extends TNode implements ITimerEventListener, Runnable {
                                 TAbstractPDU packetToSend = paquete.getCarriedPacket();
                                 if(propagateTTL)
                                     packetToSend.getIPv4Header().setTTL(paquete.getLabelStack().getTop().getTTL()-1);
+                                else if(packetToSend.getIPv4Header().getTTL()<=1){
+                                    TICMPPDU packetICMPToSend = this.replyICMP(paquete, emc);
+                                    packetICMPToSend.setSubtype(TAbstractPDU.ICMPTOREROUTE);
+                                    TPort pSalida = ports.getPort(emc.getOutgoingPortID());
+                                    pSalida.putPacketOnLink(packetICMPToSend, pSalida.getLink().getTargetNodeIDOfTrafficSentBy(this));
+                                    return;
+                                }else {
+                                    paquete.getIPv4Header().setTTL(paquete.getIPv4Header().getTTL()-1);
+                                }
                                 if (conEtiqueta1) {
                                     packetToSend.setSubtype(TAbstractPDU.IPV4_GOS);
                                 }

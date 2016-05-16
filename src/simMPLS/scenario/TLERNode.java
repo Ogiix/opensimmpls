@@ -411,6 +411,7 @@ public class TLERNode extends TNode implements ITimerEventListener, Runnable {
                         discardPacket(paquete);
                     } else {
                         if (operacion == TSwitchingMatrixEntry.PUSH_LABEL) {
+                            paquete.getIPv4Header().setTTL(paquete.getIPv4Header().getTTL()-1);
                             TMPLSPDU paqueteMPLS = this.crearPaqueteMPLS(paquete, emc);
                             TPort pSalida = ports.getPort(emc.getOutgoingPortID());
                             pSalida.putPacketOnLink(paqueteMPLS, pSalida.getLink().getTargetNodeIDOfTrafficSentBy(this));
@@ -489,6 +490,7 @@ public class TLERNode extends TNode implements ITimerEventListener, Runnable {
                             }
                             if(emc.getOutgoingPortID() != TSwitchingMatrixEntry.UNDEFINED){
                                 TPort pSalida = ports.getPort(emc.getOutgoingPortID());
+                                paquete.getIPv4Header().setTTL( paquete.getIPv4Header().getTTL()-1);
                                 TMPLSPDU paqueteMPLS = this.crearPaqueteMPLS(paquete, emc);
                                 pSalida.putPacketOnLink(paqueteMPLS, pSalida.getLink().getTargetNodeIDOfTrafficSentBy(this));
                                 try {
@@ -572,10 +574,7 @@ public class TLERNode extends TNode implements ITimerEventListener, Runnable {
                 conEtiqueta1 = true;
             }
             int valorLABEL;
-            if(paquete.getLabelStack().getTop().getLabel() == 0)
-                valorLABEL = 3;
-            else
-                valorLABEL = paquete.getLabelStack().getTop().getLabel();
+            valorLABEL = paquete.getLabelStack().getTop().getLabel();
             emc = matrizConmutacion.getEntry(valorLABEL, TSwitchingMatrixEntry.LABEL_ENTRY);
             if (emc == null) {
                 valorLABEL = IPAddress.parseNumericAddress(paquete.getCarriedPacket().getIPv4Header().getTargetIPv4Address());;
@@ -652,6 +651,11 @@ public class TLERNode extends TNode implements ITimerEventListener, Runnable {
                                     TAbstractPDU packetToSend = paquete.getCarriedPacket();
                                     if(propagateTTL)
                                         packetToSend.getIPv4Header().setTTL(paquete.getLabelStack().getTop().getTTL()-1);
+                                    else if(packetToSend.getIPv4Header().getTTL()<=1){
+                                        TICMPPDU paqueteICMP = this.replyICMP(paquete,11,0);
+                                        this.conmutarICMP(paqueteICMP, 0);
+                                        return;
+                                    }
                                     if (conEtiqueta1) {
                                         packetToSend.setSubtype(TAbstractPDU.IPV4_GOS);
                                     }
@@ -1484,7 +1488,7 @@ public class TLERNode extends TNode implements ITimerEventListener, Runnable {
      * Este m�todo toma un paquete IPv4 y la entrada de la matriz de conmutaci�n
      * asociada al mismo y crea un paquete MPLS etiquetado correctamente que contiene
      * dicho paquete IPv4 listo para ser transmitido hacia el interior del dominio.
-     * @param paqueteIPv4 Paquete IPv4 que se debe etiquetar.
+     * @param paquete The packet carried by this MPLS packet.
      * @param emc Entrada de la matriz de conmutaci�n asociada al paquete IPv4 que se desea
      * etiquetar.
      * @return El paquete IPv4 de entrada, convertido en un paquete MPLS correctamente
@@ -1495,21 +1499,21 @@ public class TLERNode extends TNode implements ITimerEventListener, Runnable {
         TMPLSPDU paqueteMPLS = null;
         try {
             paqueteMPLS = new TMPLSPDU(gIdent.getNextID(), paquete.getIPv4Header().getOriginIPAddress(), paquete.getIPv4Header().getTargetIPv4Address(), paquete);
+            paqueteMPLS.setHeader(paquete.getIPv4Header());
+            //paqueteMPLS.setTCPPayload(paqueteIPv4.getTCPPayload());
+            TMPLSLabel empls = new TMPLSLabel();
+            empls.setBoS(true);
+            empls.setEXP(0);
+            empls.setLabel(emc.getOutgoingLabel());
+            if(propagateTTL)
+                empls.setTTL(paquete.getIPv4Header().getTTL());
+            else
+                empls.setTTL(255); 
+            paqueteMPLS.getLabelStack().pushTop(empls);
+            paquete = null;
         } catch (EIDGeneratorOverflow e) {
             e.printStackTrace();
         }
-        paqueteMPLS.setHeader(paquete.getIPv4Header());
-        //paqueteMPLS.setTCPPayload(paqueteIPv4.getTCPPayload());
-        TMPLSLabel empls = new TMPLSLabel();
-        empls.setBoS(true);
-        empls.setEXP(0);
-        empls.setLabel(emc.getOutgoingLabel());
-        if(propagateTTL)
-            empls.setTTL(paquete.getIPv4Header().getTTL()-1);
-        else
-            empls.setTTL(255); 
-        paqueteMPLS.getLabelStack().pushTop(empls);
-        paquete = null;
         try {
             this.generateSimulationEvent(new TSEPacketGenerated(this, this.longIdentifierGenerator.getNextID(), this.getAvailableTime(), paqueteMPLS.getSubtype(), paqueteMPLS.getSize()));
         } catch (Exception e) {
